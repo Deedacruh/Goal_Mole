@@ -139,7 +139,7 @@ body.light {
     position: fixed;
     top: 0;
     left: 0;
-    width: 240px;
+    width: 15vw;
     height: 100vh;
     box-sizing: border-box;
 
@@ -158,8 +158,8 @@ body.light {
 
 /* Goal Mole title */
 .sidebar_title {
-    font-size: 26px;
-    margin: 8px 12px 32px;
+    font-size: 1.8vw;
+    margin: 1vh 0.8vw 4vh;
     font-weight: 800;
 }
 
@@ -167,7 +167,7 @@ body.light {
 .sidebar_nav {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.6vw;
 }
 
 /* Navigation links */
@@ -175,24 +175,24 @@ body.light {
     display: flex;
     align-items: center;
 
-    padding: 13px 14px;
+    padding: 1.5vh 1vw;
     border-radius: 10px;
 
     color: #d9d6d2;
     text-decoration: none;
-    font-size: 15px;
+    font-size: 1vw;
     font-weight: 600;
 
     transition: background-color 0.2s,
-                color 0.2s,
-                transform 0.2s;
+        color 0.2s,
+        transform 0.2s;
 }
 
 /* Hover effect */
 .sidebar_button:hover {
     background-color: #403d39;
     color: #ffffff;
-}
+}/* Pay attention to the vw's here */
 
 #pfp_selection_display {
     position: absolute;
