@@ -114,27 +114,7 @@ body.light {
     left: 1560px;
     top: 20px;
 }
-/* .sidebar_button {
-    position: fixed
-}
 
-#sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    backdrop-filter: blur(12px);
-    width: 220px;
-    
-    color: white;
-
-    padding: 16px;
-    box-sizing: border-box;
-
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-} */
 #sidebar {
     position: fixed;
     top: 0;
@@ -155,21 +135,18 @@ body.light {
     border-right: 1px solid #3b3936;
     z-index: 1000;
 }
-
 /* Goal Mole title */
 .sidebar_title {
     font-size: 1.8vw;
     margin: 1vh 0.8vw 4vh;
     font-weight: 800;
 }
-
 /* Navigation container */
 .sidebar_nav {
     display: flex;
     flex-direction: column;
     gap: 0.6vw;
 }
-
 /* Navigation links */
 .sidebar_button {
     display: flex;
@@ -187,7 +164,6 @@ body.light {
         color 0.2s,
         transform 0.2s;
 }
-
 /* Hover effect */
 .sidebar_button:hover {
     background-color: #403d39;
