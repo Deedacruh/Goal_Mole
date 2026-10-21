@@ -10,17 +10,17 @@
 <body class="{{ wallpaper_class }}">
 
     {% if wallpaper_url %}
-    <style>
-        body {
-            background-image: url("{{ wallpaper_url }}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            min-height: 100vh;
-            color: white;
-        }
-    </style>
+        <style>
+            body {
+                background-image: url("{{ wallpaper_url }}");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                min-height: 100vh;
+                color: white;
+            }
+        </style>
     {% endif %}
 
     <div id="sidebar">

@@ -578,7 +578,7 @@ def get_settings():
     )
 #current_pronouns_displayed=current_pronouns_displayed
 
-@app.route("/change_wallpaper", methods=["POST"]) # Connect update wallpaper together
+@app.route("/change_wallpaper", methods=["POST"]) #TODO Remeber this could bug on an old account if it's not in user settings.
 def change_wallpaper():
     user = session.get("user")
 
@@ -587,7 +587,6 @@ def change_wallpaper():
 
     file = request.files.get("picture")
     choice = request.form.get("choice")
-
     # Upload takes priority over the radio buttons
     if file and file.filename:
         try:
@@ -617,6 +616,7 @@ def change_wallpaper():
             )
         wallpaper_setting = choice
         wallpaper_img = None
+
     with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
         connection.execute(
             """
@@ -627,10 +627,6 @@ def change_wallpaper():
             (wallpaper_setting, wallpaper_img, user["username"])
         )
 
-        # this works due to custom being a sort of placeholder if you chose to do a custom image. 
-    connection.commit()
-    connection.close()
-    
     return redirect("/settings")
 
 @app.route("/wallpaper/<username>")
@@ -652,7 +648,7 @@ def get_wallpaper_picture(username):
 
     wallpaper_setting = result[0]
     wallpaper_img = result[1]
-
+    
     if wallpaper_setting == "custom":
         if not wallpaper_img:
             return "Custom wallpaper image not found", 404
