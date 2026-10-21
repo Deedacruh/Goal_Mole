@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Profiles {{  user["username"]  }}</title>
+    </head>
+    <body>
+        <h1>
+            {{  user["username"]  }}
+        </h1>
+        <img class="profile_pictures" src="{{ url_for('get_profile_picture', username=session['user']['username']) }}"> <!-- Don't know what to do with this url right now.-->
+        <!-- placeholder.jpg in the frontend folder -->
+    </body>
+</html>

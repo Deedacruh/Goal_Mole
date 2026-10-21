@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Goal Mole: Settings{% endblock %}
+
+{% block content %}
+    <h1 id="change_profile_picture_text">
+        Change profile picture
+    </h1>
+    <img class="profile_pictures" id="pfp_selection_display" src="/profile_picture/{{ user.username }}" alt="profile picture">
+    <form action="/update_profile" method="POST" enctype="multipart/form-data">
+        <label id="change_pfp_button">
+            Image URL
+            <input type="file" accept="image/jpeg,image/webp" placeholder="image url here" name="picture">
+        </label>
+        <button type="submit" id="submit_pfp_button">Save changes</button>
+    </form>
+    <h1 id="wallpaper_section_title">
+        Change wallpaper
+    </h1>
+
+    <h2 id="premade_wallpaper_title">
+        Wallpapers or Styles
+    </h2>
+
+    {% if error_message %}
+        <h2 id="wallpaper_error_message">
+            {{ error_message }}
+        </h2>
+    {% endif %}
+
+    <form action="/change_wallpaper"
+        method="POST"
+        enctype="multipart/form-data"
+        id="premade_wallpaper_form">
+        <div id="wallpaper_choices">
+            <label class="wallpaper_choice">
+                <input type="radio" name="choice" value="light">
+                Light
+            </label>
+
+            <label class="wallpaper_choice">
+                <input type="radio" name="choice" value="dark">
+                Dark
+            </label>
+        </div>
+
+        <label id="change_wallpaper_button">
+            Select a custom wallpaper
+            <input type="file" accept="image/jpeg,image/webp" name="picture">
+        </label>
+        <button type="submit" id="submit_wallpaper_changes">
+            Save changes
+        </button>
+    </form>
+
+    <h1 id="email_section_title">
+        Change email
+    </h1>
+    <form action="/add_public_email" method="POST">
+        <label id="change_public_email">
+            Select an email that you want publish to your profile.
+            <input type="text" name="public_email" placeholder="Input email">
+        </label>
+        <button type="submit" id="submit_email_changes">
+            Update email
+        </button>
+    </form>
+
+    {% if current_email_displayed == "" %}
+        <h2 id="current_email_displayed">
+            Current email: No email inputted
+        </h2>
+    {% elif email_error %}
+        <h2 id="current_email_displayed">
+            Current email: Error, input valid email to the remove error. 
+        </h2>
+    {% else %}
+        <h2 id="current_email_displayed">
+            Current email: {{  current_email_displayed  }}
+        </h2>
+    {% endif %}
+
+    <h2 id="email_error">
+        {{  email_error  }}
+    </h2>
+    <style>
+        #submit_email_changes {
+            position: absolute;
+            top: 650px;
+            left: 300px;
+        }
+        #email_section_title {
+            position: absolute;
+            top: 500px;
+            left: 300px;
+        }
+        #change_public_email {
+            position: absolute;
+            top: 600px;
+            left: 300px;
+        }
+        #current_email_displayed{
+            position: absolute;
+            top: 600px;
+            left: 1200px;
+        }
+        #email_error{
+            position: absolute;
+            top: 800px;
+            left: 1200px;
+        }
+    </style>
+
+    <!--<form action="/add_pronouns" method="POST">
+        <label id="change_pronouns">
+            Enter your pronouns or leave empty if you would not like to say
+            <input type="text" name="public_email" placeholder="Input email">
+        </label>
+        <button type="submit" id="submit_email_changes">
+            Update pronouns
+        </button>
+    </form>
+    <style>
+        #submit_email_changes {
+            position: absolute;
+            top: 650px;
+            left: 300px;
+        }
+        #email_section_title {
+            position: absolute;
+            top: 500px;
+            left: 300px;
+        }
+        #change_pronouns {
+            position: absolute;
+            top: 600px;
+            left: 300px;
+        }
+        #current_email_displayed{
+            position: absolute;
+            top: 600px;
+            left: 1200px;
+        }
+        #email_error{
+            position: absolute;
+            top: 800px;
+            left: 1200px;
+        }
+    </style>-->
+    <!--<form action="/update_wallpaper" method="POST" enctype="multipart/form-data" id="custom_wallpaper_form">
+        <label id="change_wallpaper_button">
+            Select a custom wallpaper
+            <input type="file" accept="image/jpeg,image/webp" name="picture">
+        </label>
+
+        <button type="submit" id="submit_custom_wallpaper_button">
+            Save wallpaper
+        </button>-->
+    </form>
+    <style>
+        /* Main wallpaper section heading */
+        #wallpaper_section_title {
+            margin: 24px 0 32px 60px;
+            font-size: 32px;
+            color: white;
+        }
+
+        /* Premade wallpaper heading */
+        #premade_wallpaper_title {
+            margin: 0 0 20px 60px;
+            font-size: 23px;
+            color: white;
+        }
+
+        /* Light and dark choices */
+        #premade_wallpaper_form {
+            margin-left: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 18px;
+        }
+
+        #wallpaper_choices {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .wallpaper_choice {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .wallpaper_choice input {
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+        }
+
+        /* Save premade wallpaper button */
+        #submit_wallpaper_changes,
+        #submit_custom_wallpaper_button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            background-color: #81b64c;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        #submit_wallpaper_changes:hover,
+        #submit_custom_wallpaper_button:hover {
+            background-color: #6a9b3c;
+            transform: translateY(-2px);
+        }
+
+        /* Custom wallpaper section */
+        #custom_wallpaper_title {
+            margin: 44px 0 20px 60px;
+            font-size: 23px;
+            color: white;
+        }
+
+        #custom_wallpaper_form {
+            margin-left: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 18px;
+        }
+
+        /* Image file picker */
+        #change_wallpaper_button {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #change_wallpaper_button input {
+            max-width: 100%;
+            color: white;
+            font-size: 14px;
+        }
+
+        /* Error message */
+        #wallpaper_error_message {
+            margin: 0 0 20px 60px;
+            color: #ff7777;
+            font-size: 16px;
+        }
+        #wallpaper_section_title,
+        #premade_wallpaper_title,
+        #custom_wallpaper_title,
+        #wallpaper_error_message,
+        #premade_wallpaper_form,
+        #custom_wallpaper_form {
+            margin-left: 300px;
+            transform: translateY(200px);
+        }
+    </style>
+{% endblock %}

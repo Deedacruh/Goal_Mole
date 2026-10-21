@@ -1,0 +1,261 @@
+
+#top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    padding: 1px 20px;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+}
+
+#top-bar-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+body.dark {
+    background-color: black;
+    color: white;
+}
+
+body.light {
+    background-color: white;
+    color: black;
+}
+#sign-up-button, #sign-in-button {
+    justify-content: flex-end;
+    transition: .3s ease;
+    color: white;
+    background-color: rgb(32, 194, 97);
+    border: none;
+    font-size: 15px;
+    border-radius: 20px; 
+    width: 80px;
+    height: 35px;
+}
+
+#sign-up-button {
+    box-shadow: inset 0 0 0 2px rgb(32, 194, 97);
+    color: rgb(32, 194, 97);
+    background-color: white;
+    margin-left: 10px;
+}
+
+#sign-in-button:hover,
+#sign-up-button:hover {
+    transform: translateY(-5px);
+}
+
+#goal-mole-title {
+    justify-content: flex-start;
+}
+
+
+/* Center the entire sign-in section */
+.sign-in-block input:not([type="radio"]),
+.sign-up-block input:not([type="radio"]) {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+/* Stack the form items vertically */
+.sign-in-block form, .sign-up-block form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Style the inputs */
+.sign-in-block input, .sign-up-block input {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+/* Style the button */
+.sign-in-block button, .sign-up-block button {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    background-color: rgb(45, 35, 188);
+}
+
+.sign-in-block button:hover, .sign-up-block button:hover {
+    color: rgb(45, 35, 188);
+    background-color: white;
+    transition: .5s ease;
+    box-shadow: inset 0 0 0 3px rgb(45, 35, 188);
+}
+
+.profile_pictures {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#pfp_homepage {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    left: 1560px;
+    top: 20px;
+}
+/* .sidebar_button {
+    position: fixed
+}
+
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    backdrop-filter: blur(12px);
+    width: 220px;
+    
+    color: white;
+
+    padding: 16px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+} */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 24px 14px;
+    background: rgba(38, 36, 33, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #ffffff;
+
+    border-right: 1px solid #3b3936;
+    z-index: 1000;
+}
+
+/* Goal Mole title */
+.sidebar_title {
+    font-size: 26px;
+    margin: 8px 12px 32px;
+    font-weight: 800;
+}
+
+/* Navigation container */
+.sidebar_nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Navigation links */
+.sidebar_button {
+    display: flex;
+    align-items: center;
+
+    padding: 13px 14px;
+    border-radius: 10px;
+
+    color: #d9d6d2;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+
+    transition: background-color 0.2s,
+                color 0.2s,
+                transform 0.2s;
+}
+
+/* Hover effect */
+.sidebar_button:hover {
+    background-color: #403d39;
+    color: #ffffff;
+}
+
+#pfp_selection_display {
+    position: absolute;
+    top: -140px;
+    left: 1250px;
+    transform: scale(0.4);
+}
+#submit_pfp_button {
+    position: absolute;
+    top: 100px;
+    left: 1200px;
+}
+#change_pfp_button {
+    position: absolute;
+    top: 100px;
+    left: 900px;
+}
+#change_profile_picture_text {
+    position: absolute;
+    top: 0px;
+    left: 300px;
+}
+#change_wallpaper_text {
+    position: absolute;
+    top: 250px;
+    left: 300px;
+}
+#submit_wallpaper_changes {
+    position: absolute;
+    top: 400px;
+    left: 1500px;
+}
+#change_wallpaper_text + form {
+    position: absolute;
+    top: 310px;
+    left: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    color: white;
+    z-index: 1001;
+}
+
+#change_wallpaper_text + form label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#change_wallpaper_text + form input[type="radio"] {
+    appearance: auto !important;
+    -webkit-appearance: radio !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: static !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#submit_wallpaper_changes {
+    position: static;
+    margin-top: 10px;
+}

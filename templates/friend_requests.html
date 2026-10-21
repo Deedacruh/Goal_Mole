@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Goal Mole: Home Page{% endblock %}
+
+{% block content %}
+    
+    <div class="friends-result-search">
+        {% for request in requests %}
+            <div class="card">
+                <img class="profile_pictures" id="pfp_pot_friends_search" src="{{ url_for('get_profile_picture', username=request['sender']) }}">
+                <h2>{{ request['sender'] }}</h2>
+                <form action="/accept_request" method="POST">
+                    <input type="hidden" name="sender" value="{{ request['sender'] }}">
+                    <button class="friend_request_button" id="sent_request">
+                        Accept request
+                    </button>
+                </form>
+                <form action="/decline_request" method="POST" >
+                    <input type="hidden" name="sender" value="{{ request['sender'] }}">
+                    <button class="friend_request_button" id="sent_request">
+                        Decline request
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+<style>
+    .users {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .card {
+        width: 200px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        text-align: center;
+        transform: translate(300px)
+    }/* Fix later */
+
+    .card img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+</style>
+
+{% endblock %}

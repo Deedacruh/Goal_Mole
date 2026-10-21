@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Goal Mole: Friends List{% endblock %}
+
+{% block content %}
+    <div class="requests-result-search">
+        {% if exist == False %}
+            <h1>You currently have nobody friended.</h1>
+        {% else %}
+            {% for name in names %}
+                <div class="card">
+                    <img class="profile_pictures" id="pfp_requests_search" src="{{ url_for('get_profile_picture', username=name) }}">
+                    <h2>{{ name }}</h2>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

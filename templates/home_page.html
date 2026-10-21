@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Goal Mole: Home Page{% endblock %}
+
+{% block content %}
+        </div>
+        <h1>{{ user["username"] }}</h1>
+        <img class="profile_pictures" id="pfp_homepage" src="{{ url_for('get_profile_picture', username=session['user']['username']) }}">
+        
+        <!-- this img automatically sends the action that this url resides in flask. In this case, it is a function called get_profile_picture. -->
+
+        <!-- Our session looks like this
+            session = {
+                "user": {
+                    "username": "Ted"
+                }
+            }
+        
+        TODO CHANGE THE SESSION. 
+        -->
+
+        <!-- this route should clear the session and redirect -->
+        <a href="/profile">My profile</a>
+    <script src="introScript.js" defer></script>
+{% endblock %}

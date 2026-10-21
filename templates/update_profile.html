@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Update Profile</title>
+    </head>
+    <body>
+        <img src="/profile_picture/{{ user.username }}" alt="profile picture"> <!-- Don't know what to do with this url right now.-->
+        <!-- placeholder.jpg in the frontend folder -->
+        <form action="/update_profile" method="POST" enctype="multipart/form-data">
+            <label>
+                Image URL
+                <input type="file" accept="image/jpeg,image/webp" placeholder="image url here" name="picture">
+            </label>
+            <form action="/update_profile">
+                <button type="submit">Save changes</button>
+            </form>
+        </form>
+    </body>
+</html>

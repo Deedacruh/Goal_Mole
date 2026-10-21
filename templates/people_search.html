@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Goal Mole: People{% endblock %}
+
+{% block content %}
+    <form action="/people_search" method="GET">
+        <label for="search_bar_friend_requests">Search for people to friend</label>
+        <input id="search_bar_friend_requests" type="text" name="input_search" value="{{  search  }}" placeholder="Type the user you want to friend.">
+
+        <button type="submit" class="submit_button_friend_requests">Search</button>
+    </form>
+    <div class="friends-result-search">
+        {% for person in people %}
+            <div class="card">
+                <img class="profile_pictures" id="pfp_pot_friends_search" src="{{ url_for('get_profile_picture', username=person['username']) }}">
+                <h2>{{ person['username'] }}</h2>
+                {% if person['username'] in friends %}
+                    <button class="friend_request_button" id="sent_request">
+                        Friended
+                    </button>
+                {% elif person['username'] in requests_sent %}
+                    <button class="friend_request_button" id="sent_request">
+                        Sent Friend Request
+                    </button>
+                {% else %}
+                    <form action="/friend_requesting" method="POST">
+                        <input type="hidden" name="user" value="{{ person['username'] }}">
+                        <button class="friend_request_button" id="request">
+                            Send Friend Request
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+<style>
+    .users {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .card {
+        width: 200px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        text-align: center;
+        transform: translate(300px)
+    }/* Fix later */
+
+    .card img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+</style>
+
+{% endblock %}

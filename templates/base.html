@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <title>{% block title %}Goal Mole{% endblock %}</title>
+</head>
+
+<body class="{{ wallpaper_class }}">
+
+    {% if wallpaper_url %}
+    <style>
+        body {
+            background-image: url("{{ wallpaper_url }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+        }
+    </style>
+    {% endif %}
+
+    <div id="sidebar">
+        <h1 class="sidebar_title">Goal Mole</h1>
+
+        <nav class="sidebar_nav">
+            <a class="sidebar_button" href="/home_page">
+                Home
+            </a>
+
+            <a class="sidebar_button" href="/friends">
+                Friends
+            </a>
+
+            <a class="sidebar_button" href="/friend_requests">
+                Friend requests
+            </a>
+
+            <a class="sidebar_button" href="/people_search">
+                Search for friends
+            </a>
+
+            <a class="sidebar_button" href="/settings">
+                Settings
+            </a>
+
+            <a class="sidebar_button logout_button" href="/log_out">
+                Log out
+            </a>
+        </nav>
+    </div>
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>

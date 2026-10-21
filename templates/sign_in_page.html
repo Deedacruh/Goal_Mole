@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link href="styles.css" rel="stylesheet">
+        <title>Sign in to GoalMole</title>
+    </head>
+    <body class="sign-in-block">
+        <header>
+            Sign in to Goal Mole
+        </header>
+        <form method="POST" action="/sign_in">
+
+            <p name="sign_in_message" id="sign_in_message">{{  sign_in_message  }}</p>
+
+            <label>Username:</label>
+            <br>
+            <input name="username" type="text" placeholder='Username' value="{{  username  }}">
+            <br>
+            <label>Password:</label>
+            <br>
+            <input name="password" type="password" placeholder='Password'>
+            <br>
+            <button type="submit" id="sign_in_button">Sign In</button>
+        </form>
+        <br>
+        <h3 id="sign-up-page-reference">
+            <p>Don't have an account? <a href="/sign_up">sign up here</a>!</p>
+        </h3>
+    </body>
+    <script src="introScript.js" defer></script>
+</html>
