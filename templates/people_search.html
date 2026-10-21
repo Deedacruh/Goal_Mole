@@ -15,17 +15,17 @@
                 <img class="profile_pictures" id="pfp_pot_friends_search" src="{{ url_for('get_profile_picture', username=person['username']) }}">
                 <h2>{{ person['username'] }}</h2>
                 {% if person['username'] in friends %}
-                    <button class="friend_request_button" id="sent_request">
+                    <button class="friend_request_button">
                         Friended
                     </button>
                 {% elif person['username'] in requests_sent %}
-                    <button class="friend_request_button" id="sent_request">
+                    <button class="friend_request_button">
                         Sent Friend Request
                     </button>
                 {% else %}
                     <form action="/friend_requesting" method="POST">
                         <input type="hidden" name="user" value="{{ person['username'] }}">
-                        <button class="friend_request_button" id="request">
+                        <button class="friend_request_button">
                             Send Friend Request
                         </button>
                     </form>
@@ -35,33 +35,49 @@
     </div>
 
 <style>
-    .users {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
     .card {
-        width: 85 vw;
-        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 2vw;
+
+        width: 85vw;
+        min-height: 6vw;
+        padding: 1vw;
         border: 1px solid #ddd;
         border-radius: 12px;
-        text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 2vh;
         margin-left: 15vw;
-    }/* Fix later */
+
+        box-sizing: border-box;
+    }
 
     .card img {
-        width: 8vw;
-        height: 8vw;
+        width: 5vw;
+        height: 5vw;
         border-radius: 50%;
-
-        position: relative;
-        left: -35vw;
-        top: 0vw;
-
         object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .card h2 {
+        font-size: 1.5vw;
+        margin: 0;
+    }
+
+    .card form {
+        margin-left: auto;
+        width: 20%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .card > .friend_request_button {
+        margin-left: auto;
+        width: 20%;
+    }
+
+    .card .friend_request_button {
+        font-size: 1.5vw;
     }
 </style>
-
 {% endblock %}
