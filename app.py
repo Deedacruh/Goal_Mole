@@ -555,9 +555,9 @@ def get_settings():
     user = session.get("user")
 
     if not user:
-        return redirect("/")
+        return redirect("/") #TODO check that shi soon
     with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
-        current_items_displayed = connection.execute(
+        current_email_displayed = connection.execute(
             """
             SELECT public_email
             FROM user_settings
@@ -565,14 +565,16 @@ def get_settings():
             """,
             (user["username"],)
         ).fetchone()
-    
+    if current_email_displayed:
+        current_email_displayed = current_email_displayed[0]
+    else:
+        current_email_displayed = None
     connection.commit()
     connection.close()
-    current_email_displayed = current_items_displayed[0]
     return render_template(
         "settings.html",
         user=user,
-        current_email_displayed=current_email_displayed,
+        current_email_displayed=current_email_displayed
     )
 #current_pronouns_displayed=current_pronouns_displayed
 
