@@ -6,8 +6,12 @@
         </div>
         <h1 id="home_page_username">@{{ user["username"] }}</h1>
         <img class="profile_pictures" id="pfp_homepage" src="{{ url_for('get_profile_picture', username=session['user']['username']) }}">
-        <input type="hidden" name="selected_profile_user" value="{{  user['username']  }}">
-        <a id="individual_profile_link" href="/profile">My profile</a>
+        <form action="/profile"> <!--Maybe change this an a href and make sure it goes to get-->
+            <input type="hidden" name="selected_profile_user" value="{{  user['username']  }}">
+            <button class="view_profile_button_home_page">
+                View profile
+            </button>
+        </form>
         <!-- this img automatically sends the action that this url resides in flask. In this case, it is a function called get_profile_picture. -->
 
         <!-- Our session looks like this

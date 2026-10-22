@@ -10,7 +10,7 @@
         <h1>
             {{  selected_user  }}
         </h1>
-        <img class="profile_pictures" src="{{ url_for('get_profile_picture', username={{  selected_user  }}) }}"> <!-- Don't know what to do with this url right now.-->
+        <img class="profile_pictures" src="{{ url_for('get_profile_picture', username=selected_user) }}">
         <!-- placeholder.jpg in the frontend folder -->
     </body>
 </html>

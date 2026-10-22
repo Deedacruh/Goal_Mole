@@ -14,7 +14,7 @@
             <div class="card">
                 <img class="profile_pictures" id="pfp_pot_friends_search" src="{{ url_for('get_profile_picture', username=person['username']) }}">
                 <h2>@{{ person['username'] }}</h2>
-                <form action="/profile"> <!--Maybe change this an a href and make sure it goes to get-->
+                <form action="/profile" method="POST"> <!--Maybe change this an a href and make sure it goes to get-->
                     <input type="hidden" name="selected_profile_user" value="{{ person['username'] }}">
                     <button class="view_profile_button_search">
                         Profile

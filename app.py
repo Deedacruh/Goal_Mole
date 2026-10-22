@@ -888,12 +888,17 @@ def add_location():
             (inputted_location, user["username"])
         )
     return redirect("/settings")
-@app.route("/profile", methods=["GET"])
-def profile_page_check(): #This whole thing needs to go by user. Not just as a blatant /profile.
+@app.route("/profile", methods=["POST"])
+def profile_page_check():
     user = session.get("user")
     selected_user = request.form.get("selected_profile_user")
+
     if user and selected_user:
-        return render_template("profile_page.html", user=user, selected_user=selected_user)
+        return render_template(
+            "profile_page.html",
+            user=user,
+            selected_user=selected_user
+        )
     else:
         return render_template("front_page.html")
 # Keep this at the bottom. This is what starts the server.
