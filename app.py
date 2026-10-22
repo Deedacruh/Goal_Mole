@@ -350,14 +350,6 @@ def get_profile_picture(username):
     return profile_picture, 200, {"Content-Type": "image/jpeg"}
     # 200 is the value that means that everything worked out and third item tells flask what kind of item we are sending and the browser read and decodes it. 
 
-@app.route("/profile")
-def profile_page_check(): #This whole thing needs to go by user. Not just as a blatant /profile.
-    user = session.get("user")
-    if user:
-        return render_template("profile_page.html", user=user)
-    else:
-        return render_template("front_page.html")
-
 @app.route("/log_out")
 def log_out():
     session.clear()
@@ -427,8 +419,6 @@ def friend_requesting():
             "INSERT INTO requests VALUES (?, ?)",
             (user["username"], selected_user)
         )
-    connection.commit()
-    connection.close()
     return redirect(request.referrer or "/people_search")
 
 @app.route("/friend_requests", methods=["GET"])
@@ -898,6 +888,14 @@ def add_location():
             (inputted_location, user["username"])
         )
     return redirect("/settings")
+@app.route("/profile", methods=["GET"])
+def profile_page_check(): #This whole thing needs to go by user. Not just as a blatant /profile.
+    user = session.get("user")
+    selected_user = request.form.get("selected_profile_user")
+    if user and selected_user:
+        return render_template("profile_page.html", user=user, selected_user=selected_user)
+    else:
+        return render_template("front_page.html")
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)

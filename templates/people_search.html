@@ -14,6 +14,12 @@
             <div class="card">
                 <img class="profile_pictures" id="pfp_pot_friends_search" src="{{ url_for('get_profile_picture', username=person['username']) }}">
                 <h2>@{{ person['username'] }}</h2>
+                <form action="/profile"> <!--Maybe change this an a href and make sure it goes to get-->
+                    <input type="hidden" name="selected_profile_user" value="{{ person['username'] }}">
+                    <button class="view_profile_button_search">
+                        Profile
+                    </button>
+                </form>
                 {% if person['username'] in friends %}
                     <button class="friend_request_button">
                         Friended
@@ -386,7 +392,138 @@
             transition: none;
         }
     }
+    /* =========================================
+    VIEW PROFILE BUTTON — PURPLE GALAXY
+    ========================================= */
 
+    .view_profile_button_search {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.7rem 1rem;
+
+        color: #f8f2ff;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    "Noto Sans", Helvetica, Arial, sans-serif;
+        font-size: 0.95rem;
+        font-weight: 650;
+        letter-spacing: 0.01em;
+        text-align: center;
+
+        background: linear-gradient(
+            135deg,
+            #6841a5,
+            #4c307b 55%,
+            #382258
+        );
+
+        border: 1px solid rgba(210, 185, 255, 0.3);
+        border-radius: 11px;
+
+        box-shadow:
+            0 4px 12px rgba(76, 48, 123, 0.2),
+            inset 0 1px rgba(255, 255, 255, 0.12);
+
+        cursor: pointer;
+
+        transition:
+            transform 0.2s ease,
+            background 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .view_profile_button_search:hover {
+        background: linear-gradient(
+            135deg,
+            #8055c4,
+            #633da0 55%,
+            #4c2b7c
+        );
+
+        border-color: rgba(220, 194, 255, 0.65);
+
+        box-shadow:
+            0 7px 20px rgba(124, 58, 237, 0.3),
+            0 0 12px rgba(168, 85, 247, 0.12);
+
+        transform: translateY(-2px);
+    }
+
+    .view_profile_button_search:active {
+        transform: translateY(0);
+    }
+
+    .view_profile_button_search:focus-visible {
+        outline: 2px solid #c4a2ff;
+        outline-offset: 3px;
+    }
+
+    /* LIGHT THEME */
+    body.light .view_profile_button_search {
+        color: #6941a5;
+        background: linear-gradient(135deg, #eee3ff, #f8f3ff);
+        border-color: #d8c4f5;
+        box-shadow: 0 2px 8px rgba(105, 65, 165, 0.08);
+    }
+
+    body.light .view_profile_button_search:hover {
+        background: linear-gradient(135deg, #e3d0ff, #f2e8ff);
+        border-color: #b99add;
+        box-shadow: 0 5px 14px rgba(105, 65, 165, 0.16);
+    }
+
+    /* CUSTOM WALLPAPER */
+    body.custom .view_profile_button_search {
+        background: linear-gradient(
+            135deg,
+            rgba(104, 65, 165, 0.9),
+            rgba(56, 34, 88, 0.85)
+        );
+
+        border-color: rgba(210, 185, 255, 0.4);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+
+    body.custom .view_profile_button_search:hover {
+        background: linear-gradient(
+            135deg,
+            rgba(128, 85, 196, 0.95),
+            rgba(76, 43, 124, 0.92)
+        );
+    }
+
+    /* MOBILE */
+    @media (max-width: 600px) {
+        .view_profile_button_search {
+            font-size: 0.9rem;
+            padding: 0.65rem 0.5rem;
+        }
+    }
+
+    /* REDUCED MOTION */
+    @media (prefers-reduced-motion: reduce) {
+        .view_profile_button_search {
+            transition: none;
+        }
+    }
+    /* PROFILE BUTTON — POSITION NEXT TO FRIEND REQUEST */
+    .card form:has(.view_profile_button_search) {
+        margin-left: auto;
+        width: 15%;
+        display: flex;
+        flex-shrink: 0;
+    }
+
+    .card form:has(.view_profile_button_search) + form,
+    .card form:has(.view_profile_button_search) + .friend_request_button {
+        margin-left: 0;
+    }
+
+    .card .view_profile_button_search {
+        width: 100%;
+        box-sizing: border-box;
+    }
 </style>
 
 {% endblock %}
