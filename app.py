@@ -892,8 +892,24 @@ def add_location():
 def profile_page_check():
     user = session.get("user")
     selected_user = request.form.get("selected_profile_user")
-
     if user and selected_user:
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            user_information = connection.execute(
+                """
+                    SELECT 
+                        wallpaper_img,
+                        wallpaper_setting,
+                        public_email,
+                        pronouns,
+                        bio,
+                        job,
+                        location 
+                    FROM user_settings
+                    WHERE username = ?
+                """,
+                (selected_user,)
+            ).fetchall()
+        #TODO user_information
         return render_template(
             "profile_page.html",
             user=user,
