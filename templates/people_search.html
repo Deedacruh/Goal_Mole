@@ -3,7 +3,7 @@
 {% block title %}Goal Mole: People{% endblock %}
 
 {% block content %}
-    <form action="/people_search" method="GET">
+    <form action="/people_search" method="GET" class="friends-search-form">
         <label for="search_bar_friend_requests">Search for people to friend</label>
         <input id="search_bar_friend_requests" type="text" name="input_search" value="{{  search  }}" placeholder="Type the user you want to friend.">
 
@@ -35,6 +35,117 @@
     </div>
 
 <style>
+    /* PURPLE GALAXY SEARCH BAR */
+    .friends-search-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+
+        width: min(70vw, 750px);
+        margin: 3rem auto 2.5rem;
+        padding: 1.8rem;
+
+        background:
+            radial-gradient(ellipse at top left, rgba(145, 91, 255, 0.2), transparent 60%),
+            linear-gradient(135deg, rgba(35, 22, 58, 0.95), rgba(19, 15, 35, 0.97));
+
+        border: 1px solid rgba(190, 150, 255, 0.35);
+        border-radius: 20px;
+
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.25),
+            0 0 25px rgba(145, 91, 255, 0.1);
+
+        box-sizing: border-box;
+    }
+
+    .friends-search-form label {
+        color: #e8d9ff;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    .friends-search-form input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.95rem 1.1rem;
+
+        color: #f8f2ff;
+        font-size: 1rem;
+        font-family: inherit;
+
+        background: rgba(12, 9, 25, 0.7);
+        border: 1px solid rgba(177, 137, 255, 0.35);
+        border-radius: 12px;
+        outline: none;
+
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: border-color 0.25s ease, box-shadow 0.25s ease,
+                    background 0.25s ease;
+    }
+
+    .friends-search-form input::placeholder {
+        color: #a89abb;
+    }
+
+    .friends-search-form input:hover {
+        border-color: rgba(190, 150, 255, 0.65);
+    }
+
+    .friends-search-form input:focus {
+        background: rgba(18, 12, 35, 0.95);
+        border-color: #bd91ff;
+
+        box-shadow:
+            0 0 0 3px rgba(168, 108, 255, 0.18),
+            0 0 22px rgba(145, 91, 255, 0.25);
+    }
+
+    .friends-search-form .submit_button_friend_requests {
+        align-self: flex-start;
+        padding: 0.8rem 1.8rem;
+        margin-top: 0.3rem;
+
+        color: white;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+
+        background: linear-gradient(135deg, #a855f7, #7c3aed 55%, #6030c9);
+        border: 1px solid rgba(222, 196, 255, 0.4);
+        border-radius: 12px;
+
+        cursor: pointer;
+
+        box-shadow:
+            0 5px 15px rgba(124, 58, 237, 0.3),
+            inset 0 1px rgba(255, 255, 255, 0.2);
+
+        transition: transform 0.2s ease, box-shadow 0.2s ease,
+                    filter 0.2s ease;
+    }
+
+    .friends-search-form .submit_button_friend_requests:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.12);
+
+        box-shadow:
+            0 8px 25px rgba(145, 91, 255, 0.4),
+            0 0 18px rgba(168, 85, 247, 0.2);
+    }
+
+    .friends-search-form .submit_button_friend_requests:active {
+        transform: translateY(0);
+    }
+
+    .friends-search-form .submit_button_friend_requests:focus-visible {
+        outline: 2px solid #e0c5ff;
+        outline-offset: 4px;
+    }
+
+    /* YOUR EXISTING RESULT CARDS */
     .card {
         display: flex;
         align-items: center;
@@ -73,15 +184,208 @@
     .card .friend_request_button {
         width: 100%;
         box-sizing: border-box;
-
         font-size: 1vw;
         padding: 0.6vw;
         text-align: center;
         white-space: normal;
     }
+
     .card > .friend_request_button {
         margin-left: auto;
         width: 15%;
     }
+
+    /* MOBILE */
+    @media (max-width: 600px) {
+        .friends-search-form {
+            width: 92%;
+            padding: 1.2rem;
+        }
+
+        .friends-search-form .submit_button_friend_requests {
+            width: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .friends-search-form input,
+        .friends-search-form .submit_button_friend_requests {
+            transition: none;
+        }
+    }
+    /* NOTO-SANS FONT */
+    .friends-search-form,
+    .friends-search-form *,
+    .friends-result-search,
+    .friends-result-search * {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    "Noto Sans", Helvetica, Arial, sans-serif,
+                    "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    /* LIGHT WALLPAPER */
+    body.light .friends-search-form {
+        background: linear-gradient(
+            135deg,
+            rgba(250, 246, 255, 0.97),
+            rgba(235, 224, 255, 0.95)
+        );
+        border: 1px solid #d8c4f5;
+        box-shadow: 0 8px 28px rgba(117, 75, 160, 0.12);
+    }
+
+    body.light .friends-search-form label {
+        color: #493365;
+    }
+
+    body.light .friends-search-form input {
+        background: rgba(255, 255, 255, 0.9);
+        color: #302344;
+        border-color: #d3c0ed;
+    }
+
+    body.light .friends-search-form input::placeholder {
+        color: #9383a8;
+    }
+
+    /* DARK WALLPAPER */
+    body.dark .friends-search-form {
+        background:
+            radial-gradient(
+                ellipse at top left,
+                rgba(145, 91, 255, 0.2),
+                transparent 60%
+            ),
+            linear-gradient(
+                135deg,
+                rgba(35, 22, 58, 0.95),
+                rgba(19, 15, 35, 0.97)
+            );
+    }
+
+    body.dark .friends-search-form label {
+        color: #e8d9ff;
+    }
+
+    /* CUSTOM WALLPAPER — FROSTED GLASS */
+    body.custom .friends-search-form,
+    body.custom .friends-result-search .card {
+        background: rgba(24, 16, 40, 0.58);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(210, 185, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    body.custom .friends-search-form label,
+    body.custom .friends-result-search .card h2 {
+        color: #f3eaff;
+    }
+
+    body.custom .friends-search-form input {
+        background: rgba(12, 9, 25, 0.75);
+        color: #f8f2ff;
+        border-color: rgba(190, 150, 255, 0.4);
+    }
+
+    body.custom .friends-search-form input::placeholder {
+        color: #b9a8ce;
+    }
+    /* SHARED BUTTON STYLING */
+    .friend_request_button {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    "Noto Sans", Helvetica, Arial, sans-serif;
+        font-size: 0.95rem;
+        font-weight: 650;
+        letter-spacing: 0.01em;
+
+        padding: 0.7rem 1rem;
+        border-radius: 11px;
+        border: 1px solid transparent;
+
+        cursor: pointer;
+        transition:
+            transform 0.2s ease,
+            background 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+
+        box-sizing: border-box;
+    }
+
+    /* SEND FRIEND REQUEST — BRIGHT PURPLE */
+
+    /* SEND FRIEND REQUEST */
+    .card form:has(input[name="user"]) .friend_request_button {
+        color: white;
+        background: linear-gradient(135deg, #b06cff, #853df5 55%, #6525cf);
+        border-color: rgba(220, 194, 255, 0.4);
+
+        box-shadow:
+            0 4px 14px rgba(124, 58, 237, 0.25),
+            inset 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .card form:has(input[name="user"]) .friend_request_button:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #c18aff, #9657ff 55%, #7539e8);
+
+        box-shadow:
+            0 7px 22px rgba(139, 92, 246, 0.4),
+            0 0 14px rgba(168, 85, 247, 0.2);
+    }
+
+    /* SENT FRIEND REQUEST — MUTED LAVENDER */
+    .card .friend_request_button:not(:has(*)) {
+        cursor: default;
+    }
+
+    /* PENDING STATUS */
+    .card .friend_request_button {
+        overflow-wrap: anywhere;
+    }
+
+    /* LIGHT THEME */
+    body.light .card form:has(input[name="user"]) .friend_request_button {
+        color: white;
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        border-color: #a879eb;
+    }
+
+    body.light .card .friend_request_button {
+        color: #6941a5;
+        background: linear-gradient(135deg, #eee3ff, #f8f3ff);
+        border-color: #d8c4f5;
+        box-shadow: 0 2px 8px rgba(105, 65, 165, 0.08);
+    }
+
+    /* CUSTOM WALLPAPER — FROSTED GLASS */
+    body.custom .card .friend_request_button {
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+
+    body.custom .card form:has(input[name="user"]) .friend_request_button {
+        color: white;
+        background: linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.9),
+            rgba(109, 40, 217, 0.85)
+        );
+        border-color: rgba(220, 194, 255, 0.4);
+    }
+
+    /* ACCESSIBILITY */
+    .friend_request_button:focus-visible {
+        outline: 2px solid #c4a2ff;
+        outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .friend_request_button {
+            transition: none;
+        }
+    }
+
 </style>
+
 {% endblock %}
