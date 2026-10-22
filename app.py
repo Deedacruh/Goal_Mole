@@ -583,11 +583,26 @@ def get_settings():
         current_pronouns_displayed = current_pronouns_displayed[0]
     else:
         current_pronouns_displayed = None
+    
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        current_bio_displayed = connection.execute(
+            """
+                SELECT bio
+                FROM user_settings
+                WHERE username = ?
+            """,
+            (user["username"],)
+        ).fetchone()
+    if current_bio_displayed:
+        current_bio_displayed = current_bio_displayed[0]
+    else:
+        current_bio_displayed = None
     return render_template(
         "settings.html",
         user=user,
         current_email_displayed=current_email_displayed,
-        current_pronouns_displayed=current_pronouns_displayed
+        current_pronouns_displayed=current_pronouns_displayed,
+        current_bio_displayed=current_bio_displayed
     )
 #current_pronouns_displayed=current_pronouns_displayed
 
@@ -743,17 +758,15 @@ def add_pronouns():
                 """,
                 ("", user["username"])
             )
-        connection.commit()
-        connection.close()
         return redirect("/settings")
     for char_pronouns in range(len(inputted_pronouns)):
         if inputted_pronouns[char_pronouns] == "/":
             slash_count += 1
         elif inputted_pronouns[char_pronouns] == " ":
-            pronouns_error = "Pronouns must have no spaces"
+            pronouns_error = "Pronouns must have no spaces."
             return render_template("settings.html", user=user, pronouns_error=pronouns_error)
     if slash_count < 1:
-        pronouns_error = "Pronouns must have a slash"
+        pronouns_error = "Pronouns must have a slash."
         return render_template("settings.html", user=user, pronouns_error=pronouns_error)
     with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
         connection.execute(
@@ -764,8 +777,34 @@ def add_pronouns():
             """,
             (inputted_pronouns, user["username"])
         )
-    connection.commit()
-    connection.close()
+    return redirect("/settings")
+
+@app.route("/add_bio", methods=["POST"])
+def add_bio():
+    user = session.get("user")
+    if not user:
+        return redirect("/")
+    inputted_bio = request.form.get("bio")
+    if not inputted_bio:
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            connection.execute(
+                """
+                    UPDATE user_settings
+                    SET bio = ?
+                    WHERE username = ?
+                """,
+                ("", user["username"])
+            )
+        return redirect("/settings")
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        connection.execute(
+            """
+                UPDATE user_settings
+                SET bio = ?
+                WHERE username = ?
+            """,
+            (inputted_bio, user["username"])
+        )
     return redirect("/settings")
 
 # Keep this at the bottom. This is what starts the server.

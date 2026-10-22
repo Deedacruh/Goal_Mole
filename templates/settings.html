@@ -169,11 +169,25 @@
 
             <label id="change_pronouns" class="field-label">
                 Pronouns
-                <input
-                    type="text"
-                    name="pronouns"
-                    placeholder="Please submit with a / and no spaces."
-                >
+                {% if current_pronouns_displayed == "" %}
+                    <input
+                        type="text"
+                        name="pronouns"
+                        placeholder="Pronouns: Prefer not to state"
+                    >
+                {% elif pronouns_error %}
+                    <input
+                        type="text"
+                        name="pronouns"
+                        placeholder="{{  pronouns_error  }}"
+                    >
+                {% else %}
+                    <input
+                        type="text"
+                        name="pronouns"
+                        placeholder="Pronouns: {{  current_pronouns_displayed  }}"
+                    >
+                {% endif %}
             </label>
 
             <button type="submit" id="submit_pronoun_changes"
@@ -182,27 +196,46 @@
             </button>
         </form>
 
+    </section>
+    <!-- BIO SECTION -->
+    <section class="settings-section" id="bio-section">
+        <div class="section-heading">
+            <h2 id="pronouns_section_title">Bio</h2>
+            <p>Create a bio under 1000 characters.</p>
+        </div>
+
+        <form action="/add_bio" method="POST"
+            class="settings-form">
+
+            <label id="change_bio" class="field-label">
+                Bio
+                <textarea
+                    name="bio"
+                    maxlength="1000"
+                    rows="5"
+                    placeholder="{{  current_bio_displayed  }}"
+                ></textarea>
+            </label>
+
+            <button type="submit" id="submit_pronoun_changes"
+                    class="settings-button">
+                Update Bio
+            </button>
+        </form>
+
         <div class="settings-status">
-            {% if current_pronouns_displayed == "" %}
-                <p id="current_pronouns_displayed">
-                    Pronouns: Prefer not to state
-                </p>
-            {% elif pronouns_error %}
-                <p id="current_pronouns_displayed">
-                    Pronouns: Error
+            {% if current_bio_displayed == "" %}
+                <p id="current_bio_displayed">
+                    Bio status: empty.
                 </p>
             {% else %}
-                <p id="current_pronouns_displayed">
-                    Pronouns: {{ current_pronouns_displayed }}.
+                <p id="current_bio_displayed">
+                    Bio status: Bio created, check your profile for more!
                 </p>
             {% endif %}
-
-            <p id="pronouns_error" class="settings-error">
-                {{ pronouns_error }}
-            </p>
         </div>
     </section>
-
+    <!-- JOB SECTION -->
 </div>
 
 
@@ -425,6 +458,42 @@
     }
 
     .field-label input:focus {
+        border-color: #b994ff;
+        background: #160e25;
+        box-shadow: 0 0 0 3px rgba(185, 148, 255, 0.17);
+    }
+
+    /* BIO TEXTAREA */
+    .field-label textarea {
+        width: min(100%, 40rem);
+        min-height: 8rem;
+        padding: 0.9rem;
+
+        color: #f5efff;
+        background: #100b1b;
+        border: 1px solid #493460;
+        border-radius: 0.65rem;
+
+        font: inherit;
+        line-height: 1.6;
+        resize: vertical;
+
+        outline: none;
+        transition:
+            border-color 0.2s,
+            box-shadow 0.2s,
+            background-color 0.2s;
+    }
+
+    .field-label textarea::placeholder {
+        color: #9986b2;
+    }
+
+    .field-label textarea:hover {
+        border-color: #7954a7;
+    }
+
+    .field-label textarea:focus {
         border-color: #b994ff;
         background: #160e25;
         box-shadow: 0 0 0 3px rgba(185, 148, 255, 0.17);
