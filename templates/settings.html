@@ -928,6 +928,76 @@
             transition-duration: 0.01ms !important;
         }
     }
+    
+    /* =========================================
+    FROSTED GLASS — CUSTOM WALLPAPER
+    ========================================= */
+
+    /* Main settings cards */
+    .settings-page .settings-section {
+        background: rgba(20, 14, 34, 0.55);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+
+        border: 1px solid rgba(221, 199, 255, 0.22);
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.16),
+            inset 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    /* Header glass effect */
+    .settings-page .settings-header {
+        background: rgba(33, 20, 54, 0.55);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+
+        border: 1px solid rgba(221, 199, 255, 0.3);
+    }
+
+    /* Custom wallpaper upload container */
+    .settings-page .custom-wallpaper-area {
+        background: rgba(20, 14, 34, 0.4);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+
+        border: 1px solid rgba(221, 199, 255, 0.2);
+    }
+
+    /* Wallpaper selection cards */
+    .settings-page .wallpaper-choice {
+        background: rgba(33, 20, 54, 0.4);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+
+    /* Light-mode frosted glass */
+    body.light-mode .settings-page .settings-section {
+        background: rgba(255, 255, 255, 0.55);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+
+        border-color: rgba(210, 192, 238, 0.65);
+        box-shadow: 0 8px 32px rgba(75, 42, 115, 0.07);
+    }
+
+    body.light-mode .settings-page .settings-header {
+        background: rgba(240, 232, 255, 0.6);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+    }
+
+    body.light-mode .settings-page .custom-wallpaper-area {
+        background: rgba(250, 247, 255, 0.5);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+    }
+
+    body.light-mode .settings-page .wallpaper-choice {
+        background: rgba(255, 255, 255, 0.45);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+
 </style>
 
 {% endblock %}
