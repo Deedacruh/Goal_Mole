@@ -597,12 +597,26 @@ def get_settings():
         current_bio_displayed = current_bio_displayed[0]
     else:
         current_bio_displayed = None
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            current_job_displayed = connection.execute(
+                """
+                    SELECT job
+                    FROM user_settings
+                    WHERE username = ?
+                """,
+                (user["username"],)
+            ).fetchone()
+    if current_job_displayed:
+        current_job_displayed = current_job_displayed[0]
+    else:
+        current_job_displayed = None
     return render_template(
         "settings.html",
         user=user,
         current_email_displayed=current_email_displayed,
         current_pronouns_displayed=current_pronouns_displayed,
-        current_bio_displayed=current_bio_displayed
+        current_bio_displayed=current_bio_displayed,
+        current_job_displayed=current_job_displayed
     )
 #current_pronouns_displayed=current_pronouns_displayed
 
@@ -804,6 +818,34 @@ def add_bio():
                 WHERE username = ?
             """,
             (inputted_bio, user["username"])
+        )
+    return redirect("/settings")
+
+@app.route("/add_job", methods=["POST"])
+def add_job():
+    user = session.get("user")
+    if not user:
+        return redirect("/")
+    inputted_job = request.form.get("job")
+    if not inputted_job:
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            connection.execute(
+                """
+                    UPDATE user_settings
+                    SET job = ?
+                    WHERE username = ?
+                """,
+                ("", user["username"]) # on settings and profile this should be unemployed.
+            )
+        return redirect("/settings")
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        connection.execute(
+            """
+                UPDATE user_settings
+                SET job = ?
+                WHERE username = ?
+            """,
+            (inputted_job, user["username"])
         )
     return redirect("/settings")
 

@@ -165,7 +165,7 @@
         </div>
 
         <form action="/add_pronouns" method="POST"
-              class="settings-form">
+            class="settings-form">
 
             <label id="change_pronouns" class="field-label">
                 Pronouns
@@ -200,7 +200,7 @@
     <!-- BIO SECTION -->
     <section class="settings-section" id="bio-section">
         <div class="section-heading">
-            <h2 id="pronouns_section_title">Bio</h2>
+            <h2 id="bio_section_title">Bio</h2>
             <p>Create a bio under 1000 characters.</p>
         </div>
 
@@ -235,7 +235,46 @@
             {% endif %}
         </div>
     </section>
+
     <!-- JOB SECTION -->
+
+    <section class="settings-section" id="job-section">
+        <div class="section-heading">
+            <h2 id="job_section_title">Job</h2>
+            <p>Input your current Job here.</p>
+        </div>
+
+        <form action="/add_job" method="POST"
+            class="settings-form">
+
+            <label id="change_job" class="field-label">
+                Job
+                <input
+                    type="text"
+                    name="job"
+                    placeholder="Job input must be 20 or less characters."
+                    maxlength="20"
+                >
+            </label>
+
+            <button type="submit" id="submit_job_changes"
+                class="settings-button">
+                Update Job
+            </button>
+        </form>
+        
+        <div class="settings-status">
+            {% if current_job_displayed == "" %}
+                <p id="current_email_displayed">
+                    Current job: Unemployed
+                </p>
+            {% else %}
+                <p id="current_email_displayed">
+                    Current job: {{ current_job_displayed }}
+                </p>
+            {% endif %}
+        </div>
+    </section>
 </div>
 
 
@@ -1066,7 +1105,29 @@
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
     }
+    /* JOB SECTION */
+    #job-section {
+        background: rgba(20, 14, 34, 0.55);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
 
+        border: 1px solid rgba(221, 199, 255, 0.22);
+        border-radius: 1rem;
+
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.16),
+            inset 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    /* JOB SECTION — LIGHT MODE */
+    body.light-mode #job-section {
+        background: rgba(255, 255, 255, 0.55);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+
+        border-color: rgba(210, 192, 238, 0.65);
+        box-shadow: 0 8px 32px rgba(75, 42, 115, 0.07);
+    }
 </style>
 
 {% endblock %}
