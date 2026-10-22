@@ -1,0 +1,374 @@
+English
+Spanish
+Mandarin
+Hindi
+Arabic
+Bengali
+Portuguese
+Russian
+Japanese
+Punjabi
+German
+Javanese
+Wu
+Indonesian
+Korean
+French
+Telugu
+Vietnamese
+Marathi
+Turkish
+Tamil
+Urdu
+Cantonese
+Persian
+Swahili
+Italian
+Thai
+Gujarati
+Kannada
+Amharic
+Bhojpuri
+Jin
+Min
+Hakka
+Jinyu
+Yue
+Polish
+Ukrainian
+Malay
+Malayalam
+Odia
+Sundanese
+Yoruba
+Burmese
+Pashto
+Uzbek
+Sindhi
+Romanian
+Dutch
+Igbo
+Azerbaijani
+Awadhi
+Gan
+Xiang
+Kazakh
+Sinhala
+Khmer
+Nepali
+Greek
+Czech
+Hungarian
+Somali
+Zhuang
+Haitian
+Kinyarwanda
+Zulu
+Xhosa
+Belarusian
+Swedish
+Bulgarian
+Serbian
+Danish
+Finnish
+Norwegian
+Slovak
+Croatian
+Lithuanian
+Latvian
+Estonian
+Hebrew
+Armenian
+Georgian
+Mongolian
+Kurdish
+Tajik
+Turkmen
+Kyrgyz
+Albanian
+Macedonian
+Bosnian
+Slovenian
+Irish
+Welsh
+Scottish Gaelic
+Basque
+Catalan
+Galician
+Icelandic
+Luxembourgish
+Maltese
+Esperanto
+Latin
+Sanskrit
+ASL
+Other Language
+Python
+JavaScript
+TypeScript
+Java
+C
+C++
+C#
+Go
+Rust
+PHP
+SQL
+Swift
+Kotlin
+Ruby
+R
+Dart
+MATLAB
+Perl
+Scala
+Objective C
+Visual Basic
+PowerShell
+Bash
+Assembly Language
+Lua
+Groovy
+Elixir
+Haskell
+Clojure
+F#
+Fortran
+COBOL
+Lisp
+Erlang
+Julia
+Solidity
+VHDL
+Verilog
+Scratch
+LabVIEW
+Delphi
+Ada
+Prolog
+OCaml
+GDScript
+PL/SQL
+T-SQL
+Apex
+ABAP
+Classic ASP
+Other Coding Language
+Leetcode
+Competition Math
+Algebra
+Geometry
+Calculus
+Statistics
+Trigonometry
+Physics
+Chemistry
+Biology
+Anatomy
+Physiology
+Astronomy
+Geology
+Ecology
+Environmental Science
+Earth Science
+Marine Biology
+World History
+European History
+American History
+Geography
+Economics
+Government
+Political Science
+Psychology
+Sociology
+Philosophy
+Ethics
+Religious Studies
+Archaeology
+Anthropology
+English Literature
+Creative Writing
+Essay Writing
+Poetry
+Journalism
+Public Speaking
+Art History
+Drawing
+Painting
+Sculpture
+Music Theory
+Music
+Theater
+Chess
+Checkers
+Go
+Shogi
+Backgammon
+Xiangqi
+Bridge
+Mahjong
+Othello
+Janggi
+Soccer
+Basketball
+Cricket
+Tennis
+Volleyball
+Ping Pong
+Badminton
+Baseball
+American Football
+Rugby
+Golf
+Hockey
+Swimming
+Boxing
+MMA
+Wrestling
+Track
+Cycling
+Gymnastics
+Formula One
+Motorsports
+Skiing
+Snowboarding
+Surfing
+Skateboarding
+Handball
+Lacrosse
+Cardio
+Weightlifting
+Bodyweight Training
+Flexibility
+Mobility
+Endurance
+Strength Training
+Plyometrics
+Calisthenics
+Yoga
+Pilates
+Balance
+Coordination
+Sports Conditioning
+Rock Climbing
+Reading
+Singing
+Dancing
+Piano
+Keyboard
+Guitar
+Bass Guitar
+Electric Guitar
+Acoustic Guitar
+Drums
+Violin
+Viola
+Cello
+Double Bass
+Harp
+Flute
+Piccolo
+Clarinet
+Oboe
+Bassoon
+Saxophone
+Trumpet
+Trombone
+French Horn
+Tuba
+Timpani
+Xylophone
+Marimba
+Vibraphone
+Glockenspiel
+Accordion
+Harmonica
+Organ
+Ukulele
+Banjo
+Mandolin
+Sitar
+Tabla
+Koto
+Shamisen
+Erhu
+Didgeridoo
+Bagpipes
+Crocheting
+Knitting
+Sewing
+Embroidery
+Cross Stitch
+Quilting
+Weaving
+Felting
+Macrame
+Leatherworking
+Woodworking
+Carpentry
+Origami
+Calligraphy
+Hand Lettering
+Watercolor
+Acrylic Painting
+Oil Painting
+Photography
+Videography
+Filmmaking
+Baking
+Cooking
+Cake Decorating
+Breadmaking
+Gardening
+Floral Design
+Candle Making
+Soap Making
+Jewelry Making
+Beadwork
+Metalworking
+Glassblowing
+Wood Carving
+Whittling
+3D Printing
+Model Building
+Miniature Painting
+Cosplay
+Costume Making
+Bookbinding
+Paper Crafting
+Scrapbooking
+Resin Art
+Tie Dyeing
+Investing
+Medical Study
+Producing Music
+Animation
+Driving
+Speedcubing
+Juggling
+Farming
+Ice Skating
+Parkour
+Barbering
+Hairdressing
+Makeup Artistry
+Fishing
+Rollerblading
+Survival Skills
+Foraging
+Beekeeping
+Animal Training
+Dog Grooming
+Pickleball
+Geometry Dash
+Focusing
+Time Management
+Film Analysis
+League of Legends
+Street Fighter
+Acting
+Voice Acting
+Translation
+Linguistics
+Sudoku
+Cryptography

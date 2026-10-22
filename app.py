@@ -136,6 +136,19 @@ def sign_up():
         as a jpeg with a quality of 80.
     """
     connection = sqlite3.connect(
+        os.path.join(currentdirectory, "skills.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS skills(
+            username TEXT NOT NULL,
+            skill TEXT,
+            total_holes_dug TEXT
+        )
+    """)
+    connection.commit()
+    connection.close()
+    connection = sqlite3.connect(
         os.path.join(currentdirectory, "requests.db")
     )
     cursor = connection.cursor()
@@ -1001,6 +1014,40 @@ def profile_page_check():
         )
     else:
         return redirect("/")
+
+@app.route("/get_skills", methods=["GET", "POST"])
+def get_skills_page():
+    user = session.get("user")
+    
+    if not user:
+        return redirect("/")
+    text = request.values.get("input_search", "").strip().lower()
+    skills = [] # final skills
+    current_skills = [] # all skills already in the SQL
+    with open(os.path.join(currentdirectory, "skills.txt"), "r", encoding="utf-8") as file:
+        all_skills = [line.strip() for line in file if line.strip()]
+    # every skill avaliable. All must start with a capitol letter at the beginning
+    # Something related to this, all_skills = []
+    with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection_skills:
+        connection_skills.row_factory = sqlite3.Row
+        skills_owned = connection_skills.execute(
+            "SELECT skill FROM skills WHERE username = ?",
+            (user["username"],)
+        ).fetchall()
+
+    for x in range(len(skills_owned)):
+        current_skills.append(skills_owned[x][0])
+    if text:
+        for skill in all_skills:
+            if skill.lower().startswith(text): # must start with the search and not be in previously added
+                skills.append(skill)
+    return render_template(
+        "add_skills.html",
+        username=user["username"],
+        skills=skills,
+        skills_input_search=text,
+        current_skills=current_skills
+    )
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)

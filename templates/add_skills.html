@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}Goal Mole: Add Skills{% endblock %}
+
+{% block content %}
+
+<div class="add-skills-page">
+
+    <form action="/get_skills" method="GET" class="skills-search-form">
+        <label for="search_bar_skills">Search for the skills you want to add</label>
+        <input id="search_bar_skills" type="text" name="input_search" value="{{ skills_input_search }}" placeholder="Over 300+ skills to choose from. Max skills: 20.">
+
+        <button type="submit" class="submit_button_skill_search">Search</button>
+    </form>
+
+    <div class="skills-result-search">
+        {% for skill in skills %}
+            <div class="card">
+                <h2>{{ skill }}</h2>
+
+                {% if skill in current_skills %}
+                    <form action="/remove_skill" method="POST">
+                        <input type="hidden" name="user" value="{{ username }}">
+                        <input type="hidden" name="skill" value="{{ skill }}">
+                        <button type="submit" class="remove_skill_button">
+                            Remove skill
+                        </button>
+                    </form>
+                {% else %}
+                    <form action="/add_skill" method="POST">
+                        <input type="hidden" name="user" value="{{ username }}">
+                        <input type="hidden" name="skill" value="{{ skill }}">
+                        <button type="submit" class="add_skill_button">
+                            Add skill
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<style>
+    /* PURPLE GALAXY SEARCH BAR */
+    .skills-search-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+
+        width: min(70vw, 750px);
+        margin: 3rem auto 2.5rem;
+        padding: 1.8rem;
+
+        background:
+            radial-gradient(ellipse at top left, rgba(145, 91, 255, 0.2), transparent 60%),
+            linear-gradient(135deg, rgba(35, 22, 58, 0.95), rgba(19, 15, 35, 0.97));
+
+        border: 1px solid rgba(190, 150, 255, 0.35);
+        border-radius: 20px;
+
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.25),
+            0 0 25px rgba(145, 91, 255, 0.1);
+
+        box-sizing: border-box;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+    }
+
+    .skills-search-form label {
+        color: #e8d9ff;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    .skills-search-form input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.95rem 1.1rem;
+
+        color: #f8f2ff;
+        font-size: 1rem;
+        font-family: inherit;
+
+        background: rgba(12, 9, 25, 0.7);
+        border: 1px solid rgba(177, 137, 255, 0.35);
+        border-radius: 12px;
+        outline: none;
+
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .skills-search-form input[type="text"]::placeholder {
+        color: #a89abb;
+    }
+
+    .skills-search-form input[type="text"]:hover {
+        border-color: rgba(190, 150, 255, 0.65);
+    }
+
+    .skills-search-form input[type="text"]:focus {
+        background: rgba(18, 12, 35, 0.95);
+        border-color: #bd91ff;
+
+        box-shadow:
+            0 0 0 3px rgba(168, 108, 255, 0.18),
+            0 0 22px rgba(145, 91, 255, 0.25);
+    }
+
+    .skills-search-form .submit_button_skill_search {
+        align-self: flex-start;
+        padding: 0.8rem 1.8rem;
+        margin-top: 0.3rem;
+
+        color: white;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+
+        background: linear-gradient(135deg, #a855f7, #7c3aed 55%, #6030c9);
+        border: 1px solid rgba(222, 196, 255, 0.4);
+        border-radius: 12px;
+        cursor: pointer;
+
+        box-shadow:
+            0 5px 15px rgba(124, 58, 237, 0.3),
+            inset 0 1px rgba(255, 255, 255, 0.2);
+
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    .skills-search-form .submit_button_skill_search:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.12);
+        box-shadow:
+            0 8px 25px rgba(145, 91, 255, 0.4),
+            0 0 18px rgba(168, 85, 247, 0.2);
+    }
+
+    .skills-search-form .submit_button_skill_search:active {
+        transform: translateY(0);
+    }
+
+    .skills-search-form .submit_button_skill_search:focus-visible {
+        outline: 2px solid #e0c5ff;
+        outline-offset: 4px;
+    }
+
+    /* SKILL RESULT CARDS */
+    .skills-result-search {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+
+        width: 84.5vw;
+        margin-left: 14vw;
+        padding: 0 2rem 2rem;
+
+        box-sizing: border-box;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+    }
+
+    .skills-result-search .card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        width: 100%;
+        min-height: 5.5rem;
+        padding: 1rem 1.4rem;
+        margin: 0;
+
+        box-sizing: border-box;
+        border: 1px solid rgba(190, 150, 255, 0.3);
+        border-radius: 14px;
+
+        background:
+            radial-gradient(ellipse at top left, rgba(145, 91, 255, 0.12), transparent 65%),
+            linear-gradient(135deg, rgba(35, 22, 58, 0.92), rgba(19, 15, 35, 0.95));
+
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .skills-result-search .card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(190, 150, 255, 0.65);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.24), 0 0 15px rgba(145, 91, 255, 0.1);
+    }
+
+    .skills-result-search .card h2 {
+        color: #f3eaff;
+        font-size: clamp(1rem, 1.4vw, 1.25rem);
+        font-weight: 700;
+        overflow-wrap: anywhere;
+        margin: 0;
+    }
+
+    .skills-result-search .card form {
+        margin-left: auto;
+        width: min(25%, 180px);
+        flex-shrink: 0;
+    }
+
+    /* ADD SKILL BUTTON */
+    .add_skill_button,
+    .remove_skill_button {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.7rem 0.8rem;
+
+        font-family: Arial, "Helvetica Neue", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+
+        border-radius: 11px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .add_skill_button {
+        color: white;
+        background: linear-gradient(135deg, #b06cff, #853df5 55%, #6525cf);
+        border: 1px solid rgba(220, 194, 255, 0.4);
+        box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+    }
+
+    .add_skill_button:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #c18aff, #9657ff 55%, #7539e8);
+        box-shadow: 0 7px 22px rgba(139, 92, 246, 0.4);
+    }
+
+    .remove_skill_button {
+        color: #f8f2ff;
+        background: linear-gradient(135deg, #6841a5, #4c307b 55%, #382258);
+        border: 1px solid rgba(210, 185, 255, 0.3);
+        box-shadow: 0 4px 12px rgba(76, 48, 123, 0.2);
+    }
+
+    .remove_skill_button:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #8055c4, #633da0 55%, #4c2b7c);
+        box-shadow: 0 7px 20px rgba(124, 58, 237, 0.3);
+    }
+
+    .add_skill_button:focus-visible,
+    .remove_skill_button:focus-visible {
+        outline: 2px solid #c4a2ff;
+        outline-offset: 3px;
+    }
+
+    /* LIGHT WALLPAPER */
+    body.light .skills-search-form {
+        background: linear-gradient(135deg, rgba(250, 246, 255, 0.97), rgba(235, 224, 255, 0.95));
+        border-color: #d8c4f5;
+        box-shadow: 0 8px 28px rgba(117, 75, 160, 0.12);
+    }
+
+    body.light .skills-search-form label {
+        color: #493365;
+    }
+
+    body.light .skills-search-form input[type="text"] {
+        background: rgba(255, 255, 255, 0.9);
+        color: #302344;
+        border-color: #d3c0ed;
+    }
+
+    body.light .skills-search-form input[type="text"]::placeholder {
+        color: #9383a8;
+    }
+
+    body.light .skills-result-search .card {
+        background: linear-gradient(135deg, rgba(250, 246, 255, 0.97), rgba(235, 224, 255, 0.95));
+        border-color: #d8c4f5;
+        box-shadow: 0 5px 18px rgba(117, 75, 160, 0.1);
+    }
+
+    body.light .skills-result-search .card h2 {
+        color: #493365;
+    }
+
+    body.light .remove_skill_button {
+        color: #6941a5;
+        background: linear-gradient(135deg, #eee3ff, #f8f3ff);
+        border-color: #d8c4f5;
+    }
+
+    body.light .remove_skill_button:hover {
+        background: linear-gradient(135deg, #e3d0ff, #f2e8ff);
+    }
+
+    /* CUSTOM WALLPAPER — FROSTED GLASS */
+    body.custom .skills-search-form,
+    body.custom .skills-result-search .card {
+        background: rgba(24, 16, 40, 0.65);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(210, 185, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    body.custom .skills-search-form label,
+    body.custom .skills-result-search .card h2 {
+        color: #f3eaff;
+    }
+
+    body.custom .skills-search-form input[type="text"] {
+        background: rgba(12, 9, 25, 0.75);
+        color: #f8f2ff;
+        border-color: rgba(190, 150, 255, 0.4);
+    }
+
+    body.custom .skills-search-form input[type="text"]::placeholder {
+        color: #b9a8ce;
+    }
+
+    /* MOBILE */
+    @media (max-width: 600px) {
+        .skills-search-form {
+            width: 92%;
+            padding: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .skills-search-form .submit_button_skill_search {
+            width: 100%;
+        }
+
+        .skills-result-search .card {
+            width: 92%;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0.9rem;
+            gap: 0.6rem;
+        }
+
+        .skills-result-search .card form {
+            width: 38%;
+        }
+
+        .skills-result-search .card h2 {
+            font-size: 1rem;
+        }
+
+        .add_skill_button,
+        .remove_skill_button {
+            padding: 0.65rem 0.4rem;
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .skills-search-form input,
+        .skills-search-form button,
+        .skills-result-search .card,
+        .add_skill_button,
+        .remove_skill_button {
+            transition: none;
+        }
+    }
+</style>
+
+{% endblock %}
