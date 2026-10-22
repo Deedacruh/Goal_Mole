@@ -278,7 +278,16 @@
                 <div class="profile-identity">
 
                     <h1>@{{ selected_user }}</h1>
-
+                    
+                    {% if exist %}
+                        <h2>
+                            {{  friend_count  }} Friends
+                        </h2>
+                    {% else %}
+                        <h2>
+                            0 Friends
+                        </h2>
+                    {% endif %}
                     <div class="profile-meta">
 
                         <!-- Pronouns -->
@@ -347,6 +356,7 @@
                 </p>
 
             </div>
+
 
         </section>
 

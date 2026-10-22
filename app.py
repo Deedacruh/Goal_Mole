@@ -504,8 +504,9 @@ def get_load_friends():
             names.append(friend["receiver"])
         elif friend["receiver"] == user["username"] and friend["username"]:
             names.append(friend["username"])    # This will turn the whole jumble dict into a bunch of names.
+    friend_count = len(names)
     exist = len(names) > 0
-    return render_template("friends_list.html", user=user, names=names, exist=exist)
+    return render_template("friends_list.html", user=user, names=names, exist=exist, friend_count=friend_count)
 
 @app.route("/update_profile", methods=["POST"])
 def update_profile():
@@ -921,14 +922,31 @@ def profile_page_check():
                 else:
                     select_user_setting[num] = select_user_setting[num][0] 
         #DONE user_information where you a jumble of checks to see if a certain SELECT works maybe like we replace up top with a select loop where we select each item once and check if it exists via looping.
+        with sqlite3.connect(os.path.join(currentdirectory, "friends.db")) as connection_friends:
+                connection_friends.row_factory = sqlite3.Row
+                friends = connection_friends.execute(
+                    "SELECT * FROM friends WHERE receiver = ? OR username = ?",
+                    (selected_user, selected_user)
+                ).fetchall()
+        names = []
+        for friend in friends:
+            if friend["username"] == selected_user and friend["receiver"]:
+                names.append(friend["receiver"])
+            elif friend["receiver"] == selected_user and friend["username"]:
+                names.append(friend["username"])    # This will turn the whole jumble dict into a bunch of names.
+        friend_count = len(names)
+        exist = len(names) > 0
         return render_template(
             "profile_page.html",
             user=user,
             selected_user=selected_user,
-            select_user_setting=select_user_setting
+            select_user_setting=select_user_setting,
+            names=names,
+            friend_count=friend_count,
+            exist=exist
         )
     else:
-        return redirect('/')
+        return redirect("/")
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
@@ -937,4 +955,4 @@ if __name__ == "__main__":
 #DONE Make sure you yourself don't appear on the friend request page
 #TODO Make the text change colors on like the settings page, for some reason that is bugged.
 #TODO add bio and stuff
-#TODO add individual profiles
+#TODO add individual profiles
