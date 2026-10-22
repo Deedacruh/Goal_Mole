@@ -559,9 +559,9 @@ def get_settings():
     with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
         current_email_displayed = connection.execute(
             """
-            SELECT public_email
-            FROM user_settings
-            WHERE username = ?
+                SELECT public_email
+                FROM user_settings
+                WHERE username = ?
             """,
             (user["username"],)
         ).fetchone()
@@ -569,12 +569,25 @@ def get_settings():
         current_email_displayed = current_email_displayed[0]
     else:
         current_email_displayed = None
-    connection.commit()
-    connection.close()
+
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        current_pronouns_displayed = connection.execute(
+            """
+                SELECT pronouns
+                FROM user_settings
+                WHERE username = ?
+            """,
+            (user["username"],)
+        ).fetchone()
+    if current_pronouns_displayed:
+        current_pronouns_displayed = current_pronouns_displayed[0]
+    else:
+        current_pronouns_displayed = None
     return render_template(
         "settings.html",
         user=user,
-        current_email_displayed=current_email_displayed
+        current_email_displayed=current_email_displayed,
+        current_pronouns_displayed=current_pronouns_displayed
     )
 #current_pronouns_displayed=current_pronouns_displayed
 
@@ -710,10 +723,10 @@ def add_public_email():
     email_error = "Invalid or unrecognizable email"
     return render_template("settings.html", user=user, email_error=email_error)
 
-"""@app.route("/add_pronouns", methods=["POST"])
+@app.route("/add_pronouns", methods=["POST"])
 def add_pronouns():
     user = session.get("user")
-    
+    slash_count = 0
     if not user:
         return redirect("/")
     inputted_pronouns = request.form.get("pronouns", "").strip()
@@ -723,11 +736,11 @@ def add_pronouns():
     if not inputted_pronouns:
         with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
             connection.execute(
-                
-                UPDATE user_settings
-                SET pronouns = ?
-                WHERE username = ?
-                ,
+                """
+                    UPDATE user_settings
+                    SET pronouns = ?
+                    WHERE username = ?
+                """,
                 ("", user["username"])
             )
         connection.commit()
@@ -744,16 +757,17 @@ def add_pronouns():
         return render_template("settings.html", user=user, pronouns_error=pronouns_error)
     with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
         connection.execute(
-            
-            UPDATE user_settings
-            SET pronouns = ?
-            WHERE username = ?
-            ,
+            """
+                UPDATE user_settings
+                SET pronouns = ?
+                WHERE username = ?
+            """,
             (inputted_pronouns, user["username"])
         )
     connection.commit()
     connection.close()
-    return redirect("/settings")"""
+    return redirect("/settings")
+
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
