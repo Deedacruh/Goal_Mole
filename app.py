@@ -904,20 +904,22 @@ def profile_page_check():
                 "job",
                 "location" 
             ] # list of all items in user_settings. I made this so we can loop through the items.
-            for num in current_items_in_user_settings:
+            for num in range(len(current_items_in_user_settings)):
                 select_user_setting.append(connection.execute( # maybe switch to append to remove error odds. 
-                    """
-                        SELECT 
-                        ?
+                    f"""
+                        SELECT {current_items_in_user_settings[num]}
                         FROM user_settings
                         WHERE username = ?
                     """,
-                    (current_items_in_user_settings[num], selected_user)
+                    (selected_user,)
                 ).fetchone())
                 if not select_user_setting[num]:
                     # if this sector is empty. 
                     # This is probably bugged TODO 
-                    select_user_setting[num] = "empty" # we use empty as a placeholder rather than just "" to remove any potential confusion.
+                    select_user_setting[num] = "empty"
+                    # we use empty as a placeholder rather than just "" to remove any potential confusion.
+                else:
+                    select_user_setting[num] = select_user_setting[num][0] 
         #DONE user_information where you a jumble of checks to see if a certain SELECT works maybe like we replace up top with a select loop where we select each item once and check if it exists via looping.
         return render_template(
             "profile_page.html",
@@ -926,7 +928,7 @@ def profile_page_check():
             select_user_setting=select_user_setting
         )
     else:
-        return render_template("front_page.html")
+        return redirect('/')
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
@@ -935,4 +937,4 @@ if __name__ == "__main__":
 #DONE Make sure you yourself don't appear on the friend request page
 #TODO Make the text change colors on like the settings page, for some reason that is bugged.
 #TODO add bio and stuff
-#TODO add individual profiles
+#TODO add individual profiles

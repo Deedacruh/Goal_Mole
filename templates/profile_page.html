@@ -1,16 +1,356 @@
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Goal Mole: {{  selected_user  }}</title>
-    </head>
-    <body>
-        <h1>
-            {{  selected_user  }}
-        </h1>
-        <img class="profile_pictures" src="{{ url_for('get_profile_picture', username=selected_user) }}">
-        <!-- placeholder.jpg in the frontend folder -->
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <title>Goal Mole: @{{ selected_user }}</title>
+
+    <style>
+        /* =========================
+           PROFILE LAYOUT
+        ========================= */
+
+        .profile-dashboard {
+            margin-left: 260px;
+            padding: 35px;
+            box-sizing: border-box;
+            min-height: 100vh;
+            color: inherit;
+        }
+
+        .profile-main {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            width: min(100%, 912px);
+            min-width: 0;
+        }
+
+        /* =========================
+           GLASS WIDGETS
+        ========================= */
+
+        .profile-widget {
+            background: rgba(25, 25, 45, 0.66);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(160, 150, 255, 0.23);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            box-sizing: border-box;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-widget h2 {
+            font-size: 1.15rem;
+            margin: 0 0 18px;
+        }
+
+        /* =========================
+           PROFILE HEADER
+        ========================= */
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            padding: 30px;
+        }
+
+        .profile_pictures {
+            width: 125px;
+            height: 125px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid rgba(166, 145, 255, 0.8);
+            flex-shrink: 0;
+        }
+
+        .profile-identity {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .profile-identity h1 {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            margin: 0 0 18px;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================
+           PERSONAL INFORMATION
+        ========================= */
+
+        .profile-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .profile-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+            padding: 11px 13px;
+            border-radius: 11px;
+            background: rgba(145, 130, 255, 0.12);
+            border: 1px solid rgba(160, 150, 255, 0.18);
+            overflow-wrap: anywhere;
+        }
+
+        .profile-info-item > span:last-child {
+            line-height: 1.5;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .empty-value {
+            opacity: 0.65;
+            font-style: italic;
+        }
+
+        /* =========================
+           BIO WIDGET
+        ========================= */
+
+        .profile-bio {
+            line-height: 1.8;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        /* =========================
+           LIGHT THEME
+        ========================= */
+
+        body.light .profile-widget {
+            background: rgba(255, 255, 255, 0.68);
+            border-color: rgba(80, 70, 120, 0.18);
+            color: #25233a;
+            box-shadow: 0 8px 30px rgba(30, 20, 60, 0.08);
+        }
+
+        body.light .profile-info-item {
+            background: rgba(110, 85, 220, 0.08);
+            border-color: rgba(110, 85, 220, 0.16);
+        }
+
+        /* =========================
+           DARK THEME
+        ========================= */
+
+        body.dark .profile-widget {
+            background: rgba(35, 32, 45, 0.78);
+            border-color: rgba(160, 150, 255, 0.22);
+            color: #f0eeff;
+        }
+
+        body.dark .profile-info-item {
+            background: rgba(145, 130, 255, 0.12);
+            border-color: rgba(160, 150, 255, 0.18);
+        }
+
+        /* =========================
+           RESPONSIVE LAYOUT
+        ========================= */
+
+        @media (max-width: 900px) {
+            .profile-dashboard {
+                padding: 25px;
+            }
+
+            .profile-main {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .profile-dashboard {
+                padding: 15px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 22px;
+            }
+
+            .profile_pictures {
+                width: 100px;
+                height: 100px;
+            }
+
+            .profile-identity {
+                width: 100%;
+            }
+
+            .profile-identity h1 {
+                font-size: 1.7rem;
+            }
+
+            .profile-meta {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .profile-widget {
+                padding: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body class="{{ select_user_setting[1] }}">
+
+    <!-- EXISTING WALLPAPER LOGIC -->
+    {% if select_user_setting[0] != "empty" %}
+        <style>
+            body {
+                background-image: url("{{ url_for('get_wallpaper_picture', username=selected_user) }}");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                min-height: 100vh;
+                color: white;
+            }
+        </style>
+    {% endif %}
+
+    <!-- SIDEBAR: KEPT AS-IS -->
+    <div id="sidebar">
+        <h1 class="sidebar_title">Goal Mole</h1>
+
+        <nav class="sidebar_nav">
+            <a class="sidebar_button" href="/home_page">
+                Home
+            </a>
+
+            <a class="sidebar_button" href="/friends">
+                Friends
+            </a>
+
+            <a class="sidebar_button" href="/friend_requests">
+                Friend requests
+            </a>
+
+            <a class="sidebar_button" href="/people_search">
+                Search for friends
+            </a>
+
+            <a class="sidebar_button" href="/settings">
+                Settings
+            </a>
+
+            <a class="sidebar_button logout_button" href="/log_out">
+                Log out
+            </a>
+        </nav>
+    </div>
+
+    <!-- PROFILE CONTENT -->
+    <main class="profile-dashboard">
+
+        <section class="profile-main">
+
+            <!-- USERNAME AND ALL PERSONAL INFORMATION -->
+            <div class="profile-widget profile-header">
+
+                <img
+                    class="profile_pictures"
+                    src="{{ url_for('get_profile_picture', username=selected_user) }}"
+                    alt="{{ selected_user }}'s profile picture"
+                >
+
+                <div class="profile-identity">
+
+                    <h1>@{{ selected_user }}</h1>
+
+                    <div class="profile-meta">
+
+                        <!-- Pronouns -->
+                        <div class="profile-info-item">
+                            <span class="detail-label">Pronouns</span>
+                            <span>
+                                {% if select_user_setting[3] != "empty" and select_user_setting[3] %}
+                                    {{ select_user_setting[3] }}
+                                {% else %}
+                                    <span class="empty-value">Prefer not to state</span>
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Job -->
+                        <div class="profile-info-item">
+                            <span class="detail-label">Job</span>
+                            <span>
+                                {% if select_user_setting[5] != "empty" and select_user_setting[5] %}
+                                    {{ select_user_setting[5] }}
+                                {% else %}
+                                    <span class="empty-value">Unemployed</span>
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="profile-info-item">
+                            <span class="detail-label">Location</span>
+                            <span>
+                                {% if select_user_setting[6] != "empty" and select_user_setting[6] %}
+                                    📍 {{ select_user_setting[6] }}
+                                {% else %}
+                                    <span class="empty-value">Not specified</span>
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Public email -->
+                        <div class="profile-info-item">
+                            <span class="detail-label">Public email</span>
+                            <span>
+                                {% if select_user_setting[2] != "empty" and select_user_setting[2] %}
+                                    {{ select_user_setting[2] }}
+                                {% else %}
+                                    <span class="empty-value">Not provided</span>
+                                {% endif %}
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- BIO: ITS OWN WIDGET -->
+            <div class="profile-widget">
+
+                <h2>About</h2>
+
+                <p class="profile-bio">
+                    {% if select_user_setting[4] != "empty" and select_user_setting[4] %}
+                        {{ select_user_setting[4] }}
+                    {% else %}
+                        This user hasn't written a bio yet.
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
 </html>
