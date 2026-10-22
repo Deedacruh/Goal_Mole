@@ -1,4 +1,3 @@
-
 #top-bar {
     position: fixed;
     top: 0;
@@ -109,13 +108,26 @@ body.light {
 }
 
 #pfp_homepage {
-    width: 80px;
-    height: 80px;
+    width: 6vw;
+    height: 6vw;
     position: absolute;
-    left: 1560px;
-    top: 20px;
+    left: 92vw;
+    top: 1vw;
 }
+#home_page_username {
+    position: absolute;
+    right: 8.5vw; /* Distance from the right edge */
+    font-size: 1.5vw;
+    top: 2.5vw;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans", Helvetica, Arial, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji";
 
+    margin: 0;
+    white-space: nowrap;
+    text-align: right;
+}
+#individual_profile_link 
 #sidebar {
     position: fixed;
     top: 0;
