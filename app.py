@@ -610,13 +610,27 @@ def get_settings():
         current_job_displayed = current_job_displayed[0]
     else:
         current_job_displayed = None
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        current_location_displayed = connection.execute(
+            """
+                SELECT location
+                FROM user_settings
+                WHERE username = ?
+            """,
+            (user["username"],)
+        ).fetchone()
+    if current_location_displayed:
+        current_location_displayed = current_location_displayed[0]
+    else:
+        current_location_displayed = None
     return render_template(
         "settings.html",
         user=user,
         current_email_displayed=current_email_displayed,
         current_pronouns_displayed=current_pronouns_displayed,
         current_bio_displayed=current_bio_displayed,
-        current_job_displayed=current_job_displayed
+        current_job_displayed=current_job_displayed,
+        current_location_displayed=current_location_displayed
     )
 #current_pronouns_displayed=current_pronouns_displayed
 
@@ -849,6 +863,41 @@ def add_job():
         )
     return redirect("/settings")
 
+@app.route("/add_location", methods=["POST"])
+def add_location():
+    user = session.get("user")
+    if not user:
+        return redirect("/")
+    inputted_location = request.form.get("location")
+    if not inputted_location:
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            connection.execute(
+                """
+                    UPDATE user_settings
+                    SET location = ?
+                    WHERE username = ?
+                """,
+                ("", user["username"])
+            )
+        return redirect("/settings")
+    for char in range(len(inputted_location)):
+        if not ((ord(inputted_location[char]) >= ord("a") and ord(inputted_location[char]) <= ord("z"))
+        or 
+        (ord(inputted_location[char]) >= ord("A") and ord(inputted_location[char]) <= ord("Z"))
+        or
+        inputted_location[char] == " "):
+            location_error = "Inputted location must contain English characters only"
+            return render_template("settings.html", user=user, location_error=location_error)
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        connection.execute(
+            """
+                UPDATE user_settings
+                SET location = ?
+                WHERE username = ?
+            """,
+            (inputted_location, user["username"])
+        )
+    return redirect("/settings")
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)

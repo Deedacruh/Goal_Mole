@@ -241,7 +241,7 @@
     <section class="settings-section" id="job-section">
         <div class="section-heading">
             <h2 id="job_section_title">Job</h2>
-            <p>Input your current Job here.</p>
+            <p>Input your current job here.</p>
         </div>
 
         <form action="/add_job" method="POST"
@@ -271,6 +271,59 @@
             {% else %}
                 <p id="current_email_displayed">
                     Current job: {{ current_job_displayed }}
+                </p>
+            {% endif %}
+        </div>
+    </section>
+    
+    <!-- LOCATION SECTION -->
+
+    <section class="settings-section" id="location-section">
+        <div class="section-heading">
+            <h2 id="location_section_title">Location</h2>
+            <p>Input your current location here.</p>
+        </div>
+
+        <form action="/add_location" method="POST"
+            class="settings-form">
+
+            <label id="change_location" class="field-label">
+                Location
+                {% if location_error %}
+                    <input
+                        type="text"
+                        name="location"
+                        placeholder="{{  location_error  }}"
+                        maxlength="20"
+                    >
+                {% else %}
+                    <input
+                        type="text"
+                        name="location"
+                        placeholder="Location input must be 20 or less characters."
+                        maxlength="20"
+                    >
+                {% endif %}
+            </label>
+
+            <button type="submit" id="submit_location_changes"
+                class="settings-button">
+                Update location
+            </button>
+        </form>
+        
+        <div class="settings-status">
+            {% if current_location_displayed == "" %}
+                <p id="current_email_displayed">
+                    Current location: Anonymous
+                </p>
+            {% elif location_error %}
+                <p id="current_email_displayed">
+                    Current location: Anonymous
+                </p>
+            {% else %}
+                <p id="current_email_displayed">
+                    Current location: {{ current_location_displayed }}
                 </p>
             {% endif %}
         </div>
@@ -1121,6 +1174,29 @@
 
     /* JOB SECTION — LIGHT MODE */
     body.light-mode #job-section {
+        background: rgba(255, 255, 255, 0.55);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+
+        border-color: rgba(210, 192, 238, 0.65);
+        box-shadow: 0 8px 32px rgba(75, 42, 115, 0.07);
+    }
+    /* LOCATION SECTION */
+    #location-section {
+        background: rgba(20, 14, 34, 0.55);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+
+        border: 1px solid rgba(221, 199, 255, 0.22);
+        border-radius: 1rem;
+
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.16),
+            inset 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    /* LOCATION SECTION — LIGHT MODE */
+    body.light-mode #location-section {
         background: rgba(255, 255, 255, 0.55);
         -webkit-backdrop-filter: blur(16px);
         backdrop-filter: blur(16px);
