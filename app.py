@@ -892,28 +892,38 @@ def add_location():
 def profile_page_check():
     user = session.get("user")
     selected_user = request.form.get("selected_profile_user")
+    select_user_setting = [] # list to hold each setting output. 
     if user and selected_user:
         with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
-            user_information = connection.execute(
-                """
-                    SELECT 
-                        wallpaper_img,
-                        wallpaper_setting,
-                        public_email,
-                        pronouns,
-                        bio,
-                        job,
-                        location 
-                    FROM user_settings
-                    WHERE username = ?
-                """,
-                (selected_user,)
-            ).fetchall()
-        #TODO user_information where you a jumble of checks to see if a certain SELECT works maybe like we replace up top with a select loop where we select each item once and check if it exists via looping.
+            current_items_in_user_settings = [
+                "wallpaper_img",
+                "wallpaper_setting",
+                "public_email",
+                "pronouns",
+                "bio",
+                "job",
+                "location" 
+            ] # list of all items in user_settings. I made this so we can loop through the items.
+            for num in current_items_in_user_settings:
+                select_user_setting.append(connection.execute( # maybe switch to append to remove error odds. 
+                    """
+                        SELECT 
+                        ?
+                        FROM user_settings
+                        WHERE username = ?
+                    """,
+                    (current_items_in_user_settings[num], selected_user)
+                ).fetchone())
+                if not select_user_setting[num]:
+                    # if this sector is empty. 
+                    # This is probably bugged TODO 
+                    select_user_setting[num] = "empty" # we use empty as a placeholder rather than just "" to remove any potential confusion.
+        #DONE user_information where you a jumble of checks to see if a certain SELECT works maybe like we replace up top with a select loop where we select each item once and check if it exists via looping.
         return render_template(
             "profile_page.html",
             user=user,
-            selected_user=selected_user
+            selected_user=selected_user,
+            select_user_setting=select_user_setting
         )
     else:
         return render_template("front_page.html")
