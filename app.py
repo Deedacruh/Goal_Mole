@@ -909,7 +909,7 @@ def profile_page_check():
                 """,
                 (selected_user,)
             ).fetchall()
-        #TODO user_information
+        #TODO user_information where you a jumble of checks to see if a certain SELECT works maybe like we replace up top with a select loop where we select each item once and check if it exists via looping.
         return render_template(
             "profile_page.html",
             user=user,
