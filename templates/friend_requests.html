@@ -25,26 +25,252 @@
         {% endfor %}
     </div>
 <style>
-    .users {
+    /* FRIEND REQUESTS LAYOUT */
+    .friends-result-search {
         display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
+        flex-direction: column;
+        gap: 0.8rem;
+
+        width: 83vw;
+        margin-left: 15vw;
+        padding: 1rem 0;
+
+        box-sizing: border-box;
     }
 
-    .card {
-        width: 200px;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        text-align: center;
-        transform: translate(300px)
-    }/* Fix later */
+    /* PURPLE GALAXY REQUEST CARD */
+    .friends-result-search .card {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
 
-    .card img {
-        width: 100px;
-        height: 100px;
+        width: 100%;
+        min-height: 100px;
+        padding: 1rem 1.25rem;
+        margin: 0;
+
+        background:
+            radial-gradient(
+                ellipse at top left,
+                rgba(145, 91, 255, 0.16),
+                transparent 65%
+            ),
+            linear-gradient(
+                135deg,
+                rgba(35, 22, 58, 0.96),
+                rgba(19, 15, 35, 0.97)
+            );
+
+        border: 1px solid rgba(190, 150, 255, 0.3);
+        border-radius: 16px;
+
+        box-shadow:
+            0 6px 22px rgba(0, 0, 0, 0.16),
+            inset 0 1px rgba(255, 255, 255, 0.04);
+
+        box-sizing: border-box;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .friends-result-search .card:hover {
+        border-color: rgba(190, 150, 255, 0.55);
+        box-shadow:
+            0 8px 28px rgba(0, 0, 0, 0.2),
+            0 0 18px rgba(145, 91, 255, 0.1);
+    }
+
+    /* PROFILE PICTURE */
+    .friends-result-search .card img {
+        width: 64px;
+        height: 64px;
+        flex-shrink: 0;
+
         border-radius: 50%;
         object-fit: cover;
+
+        border: 2px solid rgba(190, 150, 255, 0.55);
+
+        box-shadow: 0 0 14px rgba(145, 91, 255, 0.15);
+    }
+
+    /* USERNAME */
+    .friends-result-search .card h2 {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+
+        color: #eee4ff;
+
+        font-family: "Arial", "Helvetica Neue", sans-serif;
+        font-size: clamp(1rem, 1.5vw, 1.25rem);
+        font-weight: 700;
+
+        overflow-wrap: anywhere;
+    }
+
+    /* BUTTON FORMS */
+    .friends-result-search .card form {
+        display: flex;
+        flex-shrink: 0;
+        width: auto;
+        margin: 0;
+    }
+
+    /* SHARED ROBLOX-INSPIRED BUTTON STYLE */
+    .friends-result-search .friend_request_button {
+        padding: 0.7rem 1rem;
+
+        color: white;
+        font-family: "Arial", "Helvetica Neue", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+
+        border: 1px solid transparent;
+        border-radius: 10px;
+
+        cursor: pointer;
+
+        transition:
+            transform 0.2s ease,
+            filter 0.2s ease,
+            box-shadow 0.2s ease;
+
+        box-sizing: border-box;
+        white-space: nowrap;
+    }
+
+    /* ACCEPT — PURPLE GRADIENT */
+    .friends-result-search form[action="/accept_request"]
+    .friend_request_button {
+        background: linear-gradient(
+            135deg,
+            #b06cff,
+            #853df5 55%,
+            #6525cf
+        );
+
+        border-color: rgba(220, 194, 255, 0.4);
+
+        box-shadow:
+            0 4px 14px rgba(124, 58, 237, 0.25),
+            inset 0 1px rgba(255, 255, 255, 0.18);
+    }
+
+    .friends-result-search form[action="/accept_request"]
+    .friend_request_button:hover {
+        filter: brightness(1.15);
+        transform: translateY(-2px);
+
+        box-shadow: 0 7px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    /* DECLINE — MUTED RED-PURPLE */
+    .friends-result-search form[action="/decline_request"]
+    .friend_request_button {
+        color: #e8d7ff;
+        background: rgba(130, 65, 110, 0.2);
+
+        border-color: rgba(211, 140, 194, 0.35);
+    }
+
+    .friends-result-search form[action="/decline_request"]
+    .friend_request_button:hover {
+        color: white;
+        background: rgba(170, 65, 105, 0.4);
+
+        border-color: rgba(245, 155, 190, 0.55);
+        transform: translateY(-2px);
+    }
+
+    .friends-result-search .friend_request_button:active {
+        transform: translateY(0);
+    }
+
+    .friends-result-search .friend_request_button:focus-visible {
+        outline: 2px solid #c4a2ff;
+        outline-offset: 3px;
+    }
+
+    /* LIGHT THEME */
+    body.light .friends-result-search .card {
+        background: linear-gradient(
+            135deg,
+            rgba(250, 246, 255, 0.97),
+            rgba(235, 224, 255, 0.95)
+        );
+
+        border-color: #d8c4f5;
+        box-shadow: 0 5px 18px rgba(105, 65, 165, 0.08);
+    }
+
+    body.light .friends-result-search .card h2 {
+        color: #493365;
+    }
+
+    body.light .friends-result-search .card img {
+        border-color: #c9a9f4;
+    }
+
+    body.light .friends-result-search
+    form[action="/decline_request"] .friend_request_button {
+        color: #8d365f;
+        background: #fff0f6;
+        border-color: #efc4d8;
+    }
+
+    /* CUSTOM WALLPAPER — FROSTED GLASS */
+    body.custom .friends-result-search .card {
+        background: rgba(24, 16, 40, 0.58);
+
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+
+        border-color: rgba(210, 185, 255, 0.3);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 700px) {
+        .friends-result-search {
+            width: 92%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .friends-result-search .card {
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            padding: 0.9rem;
+        }
+
+        .friends-result-search .card img {
+            width: 48px;
+            height: 48px;
+        }
+
+        .friends-result-search .card h2 {
+            font-size: 1rem;
+        }
+
+        .friends-result-search .card form {
+            flex: 1;
+        }
+
+        .friends-result-search .friend_request_button {
+            width: 100%;
+            padding: 0.7rem 0.5rem;
+            white-space: normal;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .friends-result-search .card,
+        .friends-result-search .friend_request_button {
+            transition: none;
+        }
     }
 </style>
 
