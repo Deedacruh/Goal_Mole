@@ -351,7 +351,7 @@ def get_profile_picture(username):
     # 200 is the value that means that everything worked out and third item tells flask what kind of item we are sending and the browser read and decodes it. 
 
 @app.route("/profile")
-def profile_page_check():
+def profile_page_check(): #This whole thing needs to go by user. Not just as a blatant /profile.
     user = session.get("user")
     if user:
         return render_template("profile_page.html", user=user)

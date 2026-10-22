@@ -127,7 +127,11 @@ body.light {
     white-space: nowrap;
     text-align: right;
 }
-#individual_profile_link 
+#individual_profile_link {
+    position: absolute;
+    right: 8.5vw;
+    top: 5vw;
+}
 #sidebar {
     position: fixed;
     top: 0;
