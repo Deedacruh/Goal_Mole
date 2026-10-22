@@ -14,6 +14,9 @@
 
 # flask --app app run --debug
 
+from datetime import datetime # use this for getting the user's date and time, used for tasks and profile
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 from flask import Flask, render_template, make_response, redirect, request, session, url_for
 
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -52,6 +55,31 @@ currentdirectory = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, static_folder="frontend", static_url_path="")
 app.secret_key = "blahblahblah"
 
+@app.route("/save_timezone", methods=["POST"])
+def save_timezone():
+    user = session.get("user")
+
+    if not user:
+        return redirect('/')
+    data = request.get_json(silent=True) or {}
+    timezone = data.get("timezone")
+    print("Received JSON:", data)
+    print("Received timezone:", repr(timezone))
+    if not isinstance(timezone, str):
+        return {"error": "Invalid timezone"}, 400
+
+    try:
+        ZoneInfo(timezone)
+    except (ZoneInfoNotFoundError, ValueError):
+        return {"error": "Invalid timezone"}, 400
+
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        connection.execute(
+            "UPDATE user_settings SET timezone = ? WHERE username = ?",
+            (timezone, user["username"])
+        )
+
+    return {"message": "Timezone saved"}, 200
 @app.context_processor
 def inject_wallpaper():
     user = session.get("user")
@@ -147,9 +175,21 @@ def sign_up():
             pronouns TEXT,
             bio TEXT,
             job TEXT,
-            location TEXT
+            location TEXT,
+            timezone TEXT,
+            account_creation_day TEXT
         )
     """) #IMPORTANT 8 Elements in here currently
+    columns = [
+        row[1] for row in connection.execute(
+            "PRAGMA table_info(user_settings)"
+        ).fetchall()
+    ]
+
+    if "account_creation_day" not in columns:
+        connection.execute(
+            "ALTER TABLE user_settings ADD COLUMN account_creation_day TEXT"
+        )
     connection.commit()
     connection.close()
     for x in range(len(inputs)):
@@ -206,21 +246,34 @@ def sign_up():
     user = cursor.fetchone()
     # gets the first row that appears. You can also use these to do the sign up.
     if not user and password == confirm_password:
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection_requests:
+            connection_requests.row_factory = sqlite3.Row
+            result = connection_requests.execute(
+                "SELECT timezone FROM user_settings WHERE username = ?",
+                (username,)
+            ).fetchone()
+        timezone = result[0] if result and result[0] else "UTC"
+        current_time = datetime.now(ZoneInfo(timezone))
+        current_date = current_time.date()
+
         connection = sqlite3.connect(
             os.path.join(currentdirectory, "user_settings.db")
         )
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO user_settings VALUES (?, ?, ?, ?, ? ,?, ?, ?)",
-            (username, "", "dark", "", "", "", "", "") 
+            "INSERT INTO user_settings VALUES (?, ?, ?, ?, ? ,?, ?, ?, ?, ?)",
+            (username, "", "dark", "", "", "", "", "", None, current_date) 
             # dark is the background setting and username is the user and the "" is the image we are working with, the other stuff are "" because it is blank when first initialized
         )
         connection.commit()
         connection.close()
-        connection, cursor = get_connection_for_profile()
         # Username doesn't exist
         # Cursor is what you use to send commands to the database
         hashed_password = generate_password_hash(password)
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "profile.db")
+        )
+        cursor = connection.cursor()
         cursor.execute(
             "INSERT INTO profile VALUES (?, ?, ?)",
             (username, hashed_password, encoded_image)
@@ -903,7 +956,8 @@ def profile_page_check():
                 "pronouns",
                 "bio",
                 "job",
-                "location" 
+                "location",
+                "account_creation_day"
             ] # list of all items in user_settings. I made this so we can loop through the items.
             for num in range(len(current_items_in_user_settings)):
                 select_user_setting.append(connection.execute( # maybe switch to append to remove error odds. 

@@ -52,7 +52,19 @@
             </a>
         </nav>
     </div>
+    <script>
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+        fetch("/save_timezone", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                timezone: timezone
+            })
+        });
+    </script>
     {% block content %}{% endblock %}
 
 </body>
