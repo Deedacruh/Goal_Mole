@@ -13,7 +13,7 @@
         {% for person in people %}
             <div class="card">
                 <img class="profile_pictures" id="pfp_pot_friends_search" src="{{ url_for('get_profile_picture', username=person['username']) }}">
-                <h2>{{ person['username'] }}</h2>
+                <h2>@{{ person['username'] }}</h2>
                 {% if person['username'] in friends %}
                     <button class="friend_request_button">
                         Friended
@@ -213,14 +213,15 @@
             transition: none;
         }
     }
-    /* NOTO-SANS FONT */
+    /* ARIAL-STYLE FONT */
     .friends-search-form,
     .friends-search-form *,
     .friends-result-search,
-    .friends-result-search * {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                    "Noto Sans", Helvetica, Arial, sans-serif,
-                    "Apple Color Emoji", "Segoe UI Emoji";
+    .friends-result-search *,
+    .friend_request_button {
+        font-family: "Arial", "Helvetica Neue", sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.01em;
     }
     /* LIGHT WALLPAPER */
     body.light .friends-search-form {
