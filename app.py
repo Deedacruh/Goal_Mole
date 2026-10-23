@@ -381,15 +381,6 @@ def post_sign_in():
     connection.close()
     return resp
 
-@app.route("/home_page", methods=["GET"])
-def home_page():
-    user = session.get("user")
-
-    if not user:
-        return redirect("/")
-
-    return render_template("home_page.html", user=user)
-
 
 @app.route("/profile_picture/<username>")
 def get_profile_picture(username):
@@ -1099,6 +1090,33 @@ def remove_skills():
             (user["username"], skill)
         )
     return redirect("/get_skills")
+
+@app.route("/home_page", methods=["GET"])
+def home_page():
+    user = session.get("user")
+
+    if not user:
+        return redirect("/")
+    current_skills = []
+    with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection_skills:
+        connection_skills.row_factory = sqlite3.Row
+        skills_owned = connection_skills.execute(
+            "SELECT skill FROM skills WHERE username = ?",
+            (user["username"],)
+        ).fetchall()
+    for x in range(len(skills_owned)):
+        current_skills.append(skills_owned[x][0])
+    return render_template("home_page.html", user=user, current_skills=current_skills)
+@app.route("/add_task", methods=["GET"])
+def add_task():
+    user = session.get("user")
+    if not user:
+        return redirect("/")
+    task_input = request.args.get("task_input")
+    selected_skill = request.args.get("skills_radio")
+    selected_habit = request.args.get("habitual_radio")
+    
+    
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
