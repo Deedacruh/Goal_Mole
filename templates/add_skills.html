@@ -19,16 +19,29 @@
                 <h2>{{ skill }}</h2>
 
                 {% if skill in current_skills %}
-                    <form action="/remove_skill" method="POST">
-                        <input type="hidden" name="user" value="{{ username }}">
+                    <form action="/remove_skills" method="POST" class="remove-skill-form">
+                        <label for="remove-{{ loop.index }}" class="remove-skill-label">
+                            Type REMOVE to confirm
+                        </label>
+
+                        <input
+                            id="remove-{{ loop.index }}"
+                            type="text"
+                            name="input_remove"
+                            class="remove-skill-input"
+                            placeholder="Type REMOVE"
+                            autocomplete="off"
+                            required
+                        >
+
                         <input type="hidden" name="skill" value="{{ skill }}">
+
                         <button type="submit" class="remove_skill_button">
                             Remove skill
                         </button>
                     </form>
                 {% else %}
                     <form action="/add_skill" method="POST">
-                        <input type="hidden" name="user" value="{{ username }}">
                         <input type="hidden" name="skill" value="{{ skill }}">
                         <button type="submit" class="add_skill_button">
                             Add skill
@@ -37,6 +50,12 @@
                 {% endif %}
             </div>
         {% endfor %}
+        {% if error_remove_message %}
+            <div class="error-remove-message" role="alert">
+                <strong>Couldn't remove skill</strong>
+                <p>{{ error_remove_message }}</p>
+            </div>
+        {% endif %}
     </div>
 
 </div>
@@ -363,6 +382,78 @@
         .remove_skill_button {
             transition: none;
         }
+    }
+    /* REMOVE SKILL CONFIRMATION */
+    .skills-result-search .remove-skill-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+
+        width: min(30%, 240px);
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+
+    .remove-skill-label {
+        color: #d8c4f5;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .remove-skill-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.7rem 0.8rem;
+
+        color: #f8f2ff;
+        background: rgba(12, 9, 25, 0.75);
+        border: 1px solid rgba(190, 150, 255, 0.4);
+        border-radius: 10px;
+
+        font-family: Arial, "Helvetica Neue", sans-serif;
+        font-size: 0.9rem;
+    }
+
+    .remove-skill-input:focus {
+        outline: 2px solid #bd91ff;
+        outline-offset: 2px;
+    }
+
+    .error-remove-message {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0.5rem 0;
+        padding: 1rem 1.2rem;
+
+        color: #ffd8e0;
+        background: rgba(130, 25, 60, 0.2);
+        border: 1px solid rgba(255, 110, 150, 0.55);
+        border-left: 4px solid #ff7096;
+        border-radius: 12px;
+
+        font-family: Arial, "Helvetica Neue", sans-serif;
+        font-size: 0.95rem;
+    }
+
+    .error-remove-message strong {
+        display: block;
+        margin-bottom: 0.35rem;
+    }
+
+    .error-remove-message p {
+        margin: 0;
+    }
+    .skills-result-search .remove-skill-form {
+        width: 45%;
+    }
+
+    .remove-skill-label {
+        font-size: 0.7rem;
+    }
+
+    .remove-skill-input {
+        padding: 0.6rem;
+        font-size: 0.8rem;
     }
 </style>
 

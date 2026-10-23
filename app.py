@@ -143,7 +143,7 @@ def sign_up():
         CREATE TABLE IF NOT EXISTS skills(
             username TEXT NOT NULL,
             skill TEXT,
-            total_holes_dug TEXT
+            total_holes_dug INT
         )
     """)
     connection.commit()
@@ -1048,6 +1048,43 @@ def get_skills_page():
         skills_input_search=text,
         current_skills=current_skills
     )
+
+@app.route("/add_skills", methods=["POST"])
+def add_skills():
+    user = session.get("user")
+    if not user:
+        return redirect("/")
+
+    selected_skill = request.form.get("skill")
+
+    with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+        connection.execute(
+            "INSERT INTO skills VALUES (?, ?, ?)",
+            (user["username"], selected_skill, 0)
+        )
+    return redirect("/get_skills")
+
+@app.route("/remove_skills", methods=["POST"])
+def remove_skills():
+    user = session.get("user")
+    if not user:
+        return redirect("/")
+
+    remove_input = request.form.get("input_remove")
+    skill = request.form.get("skill")
+    if remove_input != "REMOVE":
+        error_remove_message = 'Please input "REMOVE".'
+        return render_template(
+            "add_skills.html",
+            username=user["username"],
+            error_remove_message=error_remove_message
+        )
+    with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+        connection.execute(
+            "DELETE FROM skills WHERE username = ? AND skill = ?",
+            (user["username"], skill)
+        )
+    return redirect("/get_skills")
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
