@@ -196,6 +196,35 @@
         </section>
 
     </div>
+    <div class="tasks_today" id="task_row">
+        {% for current_task in current_tasks %}
+            <div class="card">
+                <div class="task-card-task">
+                    {{  current_task["task"]  }}
+                </div>
+                <div class="task-card-skill">
+                    {{  current_task["skill"]  }}
+                </div>
+                <form action="/complete_task" method="POST"> <!--Maybe change this an a href and make sure it goes to get-->
+                    <input type="hidden" name="selected_task_completed" value="{{  current_task['task']  }}">
+                    <input type="hidden" name="selected_day_completed" value="{{  current_task['day_of_month_added']  }}">
+                    <input type="hidden" name="selected_skill_completed" value="{{  current_task['skill']  }}">
+                    <button class="view_profile_button_search">
+                        Complete task
+                    </button>
+                </form>
+                <form action="/delete_task" method="POST"> <!--Maybe change this an a href and make sure it goes to get-->
+                    <input type="hidden" name="selected_task_completed" value="{{  current_task['task']  }}">
+                    <input type="hidden" name="selected_day_completed" value="{{  current_task['day_of_month_added']  }}">
+                    <input type="hidden" name="selected_skill_completed" value="{{  current_task['skill']  }}">
+                    <button class="view_profile_button_search">
+                        Delete task
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+
+    </div>
 
 </div>
 

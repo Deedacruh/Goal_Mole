@@ -14,6 +14,7 @@
 
 # flask --app app run --debug
 
+import calendar
 from datetime import datetime # use this for getting the user's date and time, used for tasks and profile
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -144,7 +145,8 @@ def sign_up():
             username TEXT NOT NULL,
             task TEXT,
             skill TEXT,
-            recurrence TEXT
+            recurrence TEXT,
+            every_month_day TEXT
         )
     """)
     # Recurrence is weekday it was created or like every day or month
@@ -171,7 +173,8 @@ def sign_up():
         CREATE TABLE IF NOT EXISTS tasks_today(
             username TEXT NOT NULL,
             task TEXT,
-            skill TEXT
+            skill TEXT,
+            day_of_month_added TEXT
         )
     """)
     # If it's the next day then you would check the tasks_reloader 
@@ -1141,6 +1144,21 @@ def home_page():
 
     if not user:
         return redirect("/")
+    daily_tasks = []
+    current_day = datetime.now().strftime("%A").lower()
+    day_of_month = datetime.now().day
+    for db in ["tasks_today.db", "tasks_reloader.db"]:
+        connection = sqlite3.connect(db)
+        tables = connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'"
+        ).fetchall()
+        print(db, tables)
+        connection.close()
+
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+
+    days_in_month = calendar.monthrange(current_year, current_month)[1] # use of calendar to get days in month
     current_skills = []
     with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection_skills:
         connection_skills.row_factory = sqlite3.Row
@@ -1150,18 +1168,121 @@ def home_page():
         ).fetchall()
     for x in range(len(skills_owned)):
         current_skills.append(skills_owned[x][0])
-    return render_template("home_page.html", user=user, current_skills=current_skills)
+
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection_tasks_today:
+        connection_tasks_today.row_factory = sqlite3.Row
+        connection_tasks_today.execute(
+            "DELETE FROM tasks_today WHERE username = ?",
+            (user["username"],)
+        )
+    
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_reloader.db")) as connection_skills:
+        connection_skills.row_factory = sqlite3.Row
+        task_reloading = connection_skills.execute(
+            "SELECT task, skill, recurrence, every_month_day FROM tasks_reloader WHERE username = ?",
+            (user["username"],)
+        ).fetchall()
+
+
+
+    for x in task_reloading:
+        if x["recurrence"] == "every_day":
+            connection = sqlite3.connect(
+                os.path.join(currentdirectory, "tasks_today.db")
+            )
+            cursor = connection.cursor()
+            cursor.execute(
+                "INSERT INTO tasks_today VALUES (?, ?, ?, ?)",
+                (user["username"], x["task"], x["skill"], day_of_month)
+            )
+            # Recurrence is weekday it was created or like every day or month
+            connection.commit()
+            connection.close()
+        elif "every_" + current_day == x["recurrence"]:
+            connection = sqlite3.connect(
+                os.path.join(currentdirectory, "tasks_today.db")
+            )
+            cursor = connection.cursor()
+            cursor.execute(
+                "INSERT INTO tasks_today VALUES (?, ?, ?, ?)",
+                (user["username"], x["task"], x["skill"], day_of_month)
+            )
+            connection.commit()
+            connection.close()
+        elif x["recurrence"] == "every_month":
+            if x["every_month_day"] == day_of_month:
+                connection = sqlite3.connect(
+                    os.path.join(currentdirectory, "tasks_today.db")
+                )
+                cursor = connection.cursor()
+                cursor.execute(
+                    "INSERT INTO tasks_today VALUES (?, ?, ?, ?)",
+                    (user["username"], x["task"], x["skill"], day_of_month)
+                )
+                connection.commit()
+                connection.close()
+            elif (
+                x["every_month_day"] is not None
+                and x["every_month_day"] > 28
+                and day_of_month == days_in_month
+                and day_of_month < x["every_month_day"]
+            ):
+                    connection = sqlite3.connect(
+                        os.path.join(currentdirectory, "tasks_today.db")
+                    )
+                    cursor = connection.cursor()
+                    cursor.execute(
+                        """
+                        INSERT INTO tasks_today (username, task, skill, day_of_month)
+                        VALUES (?, ?, ?, ?)
+                        """,
+                        (user["username"], x["task"], x["skill"], day_of_month)
+                    )
+                    connection.commit()
+                    connection.close()
+
+    # This query must be OUTSIDE the loop.
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection_tasks_today:
+        connection_tasks_today.row_factory = sqlite3.Row
+
+        connection_tasks_today.execute(
+            "ATTACH DATABASE ? AS completed_db",
+            (os.path.join(currentdirectory, "tasks_completed_today.db"),)
+        )
+
+        current_tasks = connection_tasks_today.execute(
+            """
+            SELECT *
+            FROM tasks_today
+            WHERE username = ?
+            AND task NOT IN (
+                SELECT task
+                FROM completed_db.tasks_completed_today
+                WHERE username = ?
+            )
+            """,
+            (user["username"], user["username"])
+        ).fetchall()
+
+    return render_template(
+        "home_page.html",
+        user=user,
+        current_skills=current_skills,
+        current_tasks=current_tasks
+    )
+        
+    return render_template("home_page.html", user=user, current_skills=current_skills, current_tasks=current_tasks)
 
 @app.route("/add_task", methods=["POST"])
 def add_task():
     user = session.get("user")
+
     if not user:
         return redirect("/")
 
-    current_day = datetime.now().strftime("%A").lower()
     day_of_month = datetime.now().day
 
-    task_input = request.args.get("task_input")
+    task_input = request.args.get("task_input").strip()
     selected_skill = request.args.get("skills_radio")
     selected_habit = request.args.get("habitual_radio")
 
@@ -1174,13 +1295,45 @@ def add_task():
     elif selected_habit == None:
         error_message = "Please select a recurrence."
         return render_template("home_page.html", error_message=error_message)
-    with sqlite3.connect(os.path.join(currentdirectory, "tasks_reloader.db")) as connection_tasks_reloader:
-        connection_tasks_reloader.row_factory = sqlite3.Row
-        tasks_reloader_tasks = connection_tasks_reloader.execute(
+    with sqlite3.connect("tasks_reloader.db") as connection:
+        cursor.execute(
+            "SELECT * FROM tasks_reloader WHERE username = ?",
+            (user["username"],)
+        )
+
+        tasks = cursor.fetchall()
+    if len(tasks) > 75:
+        error_message = "Over 75 scheduled tasks! Please remove a tasks to add this task."
+        return render_template("home_page.html", error_message=error_message)
+    with sqlite3.connect("tasks_reloader.db") as connection:
+        cursor.execute(
             "SELECT task FROM tasks_reloader WHERE username = ?",
             (user["username"],)
-        ).fetchone()
+        )
+        task = cursor.fetchall()
 
+    for x in task:
+        if x[0] == task_input:
+            error_message = "No duplicate tasks!"
+            return render_template("home_page.html", error_message=error_message)
+        
+    connection = sqlite3.connect(
+        os.path.join(currentdirectory, "tasks_reloader.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute(
+        "INSERT INTO tasks_reloader VALUES (?, ?, ?, ?, ?)",
+        (user["username"], task_input, selected_skill, selected_habit, day_of_month) # CURRENT DATE SHOWS +1 DAY TODO FIX
+    )
+    connection.commit()
+    connection.close()
+
+@app.route("/complete_task", methods=["POST"])
+def complete_task():
+    user = session.get("user")
+    
+    if not user:
+        return redirect("/")
     
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
@@ -1191,8 +1344,9 @@ if __name__ == "__main__":
 #DONE Make the text change colors on like the settings page, for some reason that is bugged.
 #DONE add bio and stuff
 #DONE add individual profiles
-# TODO Add profile on friend list and an unfriend option.
-# TODO On profile page add the skills ranked by holes dug for each one on the side segment . 
+# DONE Add profile on friend list
+# TODO Add unfriend option.
+# TODO On profile page add the skills ranked by holes dug for each one on the side segment. 
 # TODO profile: friends below the about with only profile pictures and names
 # TODO Add a fun little side not below all of this like the bio but shorter below daily activity.
 # TODO Daily activities are the history of the activities done in that day laid out like people search
