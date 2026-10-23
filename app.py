@@ -680,6 +680,22 @@ def get_settings():
         current_location_displayed = current_location_displayed[0]
     else:
         current_location_displayed = None
+    current_skills_displayed_str = ""
+    with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+        current_skills_displayed = connection.execute(
+            """
+                SELECT skill
+                FROM skills
+                WHERE username = ?
+            """,
+            (user["username"],)
+        ).fetchall()
+    if current_skills_displayed:
+        for x in range(len(current_skills_displayed)):
+            current_skills_displayed_str += current_skills_displayed[x][0] + "\n" #TODO Make each skill a new line
+
+    else:
+        current_skills_displayed_str = ""
     return render_template(
         "settings.html",
         user=user,
@@ -687,7 +703,8 @@ def get_settings():
         current_pronouns_displayed=current_pronouns_displayed,
         current_bio_displayed=current_bio_displayed,
         current_job_displayed=current_job_displayed,
-        current_location_displayed=current_location_displayed
+        current_location_displayed=current_location_displayed,
+        current_skills_displayed_str=current_skills_displayed_str
     )
 #current_pronouns_displayed=current_pronouns_displayed
 

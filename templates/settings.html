@@ -332,7 +332,7 @@
     <section class="settings-section" id="add-skills-section">
         <!--Yadiyadi ya load skills here with an image or not maybe probably not here, maybe on profile-->
         <div class="section-heading">
-            <h2 id="add_skills_section_title">Check out potential skills to show</h2>
+            <h2 id="add_skills_section_title">Add and remove skills</h2>
             <form action="/get_skills" method="POST">
                 <button type="submit" id="load_potential_skills"
                     class="settings-button">
@@ -340,6 +340,16 @@
                 </button>
             </form>
         </div>
+        {% if current_skills_displayed_str == "" %}
+            <p id="current_skills_displayed">
+                Current skills: No skills added yet.
+            </p>
+        {% else %}
+            <p id="current_skills_displayed">
+                Current skills: 
+                <br>{{ current_skills_displayed_str }}
+            </p>
+        {% endif %}
     </section>
 </div>
 
