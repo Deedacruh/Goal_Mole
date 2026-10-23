@@ -275,7 +275,7 @@ def sign_up():
         cursor = connection.cursor()
         cursor.execute(
             "INSERT INTO user_settings VALUES (?, ?, ?, ?, ? ,?, ?, ?, ?, ?)",
-            (username, "", "dark", "", "", "", "", "", None, current_date) 
+            (username, "", "dark", "", "", "", "", "", None, current_date) # CURRENT DATE SHOWS +1 DAY TODO FIX
             # dark is the background setting and username is the user and the "" is the image we are working with, the other stuff are "" because it is blank when first initialized
         )
         connection.commit()
@@ -390,7 +390,6 @@ def home_page():
 
     return render_template("home_page.html", user=user)
 
-# Zis is the homepage clearly. TODO
 
 @app.route("/profile_picture/<username>")
 def get_profile_picture(username):
@@ -411,7 +410,7 @@ def get_profile_picture(username):
         return "Profile picture not found", 404
 
     profile_picture = result[0]
-    connection.close() #SUS TODO
+    connection.close()
     # 0 here just gets the value rather than key and value.
     return profile_picture, 200, {"Content-Type": "image/jpeg"}
     # 200 is the value that means that everything worked out and third item tells flask what kind of item we are sending and the browser read and decodes it. 
@@ -450,7 +449,6 @@ def people_search():
             ).fetchall()
 
         requests_sent = [row["receiver"] for row in requests_sent]
-        # TODO
         with sqlite3.connect(os.path.join(currentdirectory, "friends.db")) as connection_friends:
             connection_friends.row_factory = sqlite3.Row
             friends_dict = connection_friends.execute(
@@ -708,7 +706,7 @@ def get_settings():
     )
 #current_pronouns_displayed=current_pronouns_displayed
 
-@app.route("/change_wallpaper", methods=["POST"]) #TODO Remeber this could bug on an old account if it's not in user settings.
+@app.route("/change_wallpaper", methods=["POST"]) #TODO Remember this could bug on an old account if it's not in user settings.
 def change_wallpaper():
     user = session.get("user")
 
@@ -1000,7 +998,6 @@ def profile_page_check():
                 ).fetchone())
                 if not select_user_setting[num]:
                     # if this sector is empty. 
-                    # This is probably bugged TODO 
                     select_user_setting[num] = "empty"
                     # we use empty as a placeholder rather than just "" to remove any potential confusion.
                 else:
@@ -1106,8 +1103,15 @@ def remove_skills():
 if __name__ == "__main__":
     app.run(debug=True)
 
-#TODO FINISHED 10/20/26 with 15 hours done today! I need to fix the background bug where when I select custom it just like shows white and also when I make the mode dark the main text is light no matter?
+#DONE FINISHED 10/20/26 with 15 hours done today! I need to fix the background bug where when I select custom it just like shows white and also when I make the mode dark the main text is light no matter?
 #DONE Make sure you yourself don't appear on the friend request page
-#TODO Make the text change colors on like the settings page, for some reason that is bugged.
-#TODO add bio and stuff
-#TODO add individual profiles
+#DONE Make the text change colors on like the settings page, for some reason that is bugged.
+#DONE add bio and stuff
+#DONE add individual profiles
+# TODO Add profile on friend list and an unfriend option.
+# TODO On profile page add the skills ranked by holes dug for each one on the side segment . 
+# TODO profile: friends below the about with only profile pictures and names
+# TODO Add a fun little side not below all of this like the bio but shorter below daily activity.
+# TODO Daily activities are the history of the activities done in that day laid out like people search
+# TODO Holes dug today and overall on the profile
+# TODO Add the task adder on homepage. HARDEST SEGMENT PROBABLY. 

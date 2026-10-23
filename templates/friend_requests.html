@@ -8,7 +8,7 @@
         {% for request in requests %}
             <div class="card">
                 <img class="profile_pictures" id="pfp_pot_friends_search" src="{{ url_for('get_profile_picture', username=request['sender']) }}">
-                <h2>{{ request['sender'] }}</h2>
+                <h2>@{{ request['sender'] }}</h2>
                 <form action="/accept_request" method="POST">
                     <input type="hidden" name="sender" value="{{ request['sender'] }}">
                     <button class="friend_request_button" id="sent_request">
