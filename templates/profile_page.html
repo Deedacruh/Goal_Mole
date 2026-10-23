@@ -343,7 +343,17 @@
                     </div>
                 </div>
             </div>
-
+            <!-- TASKS COMPLETED: EACH WIDGET AS ONE LINE WITH INFO. EACH ONE HAS SAME WIDTH AS BIO WIDGET-->
+            {% for item_selector in tasks_complete_today %}
+                <div class="task_complete_card">
+                    <div class="task_complete_skill">
+                        <h2>{{  item_selector["skill"]  }}</h2>
+                    </div>
+                    <div class="task_complete_task">
+                        <h2>{{  item_selector["task"]  }}</h2>
+                    </div>
+                </div>
+            {% endfor %}
             <!-- BIO: ITS OWN WIDGET -->
             <div class="profile-widget">
 
@@ -358,6 +368,18 @@
                 </p>
 
             </div>
+            <!-- CURRENT SKILLS: EACH WIDGET AS ONE LINE WITH INFO. EACH ONE TAKES OVER THE RIGHT SIDE OF THE PROFILE -->
+            {% for current_skill in current_skills %}
+                
+                <div class="task_complete_card">
+                    <div class="task_complete_skill">
+                        <h2>{{  current_skill["skill"]  }}</h2>
+                    </div>
+                    <div class="task_complete_task">
+                        <h2>{{  current_skill["total_holes_dug"]  }}</h2>
+                    </div>
+                </div>
+            {% endfor %}
 
 
         </section>

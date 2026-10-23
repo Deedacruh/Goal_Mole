@@ -137,6 +137,38 @@ def sign_up():
         as a jpeg with a quality of 80.
     """
     connection = sqlite3.connect(
+        os.path.join(currentdirectory, "user_holes.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_holes(
+            username TEXT NOT NULL,
+            total_holes_dug INT
+        )
+    """)
+    cursor.execute(
+        "INSERT INTO user_holes VALUES (?, ?)",
+        (user["username"], 0)
+    )
+    connection.commit()
+    connection.close()
+    connection = sqlite3.connect(
+        os.path.join(currentdirectory, "global_holes.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS global_holes(
+            unique_test TEST UNIQUE
+            total_global_holes INT
+        )
+    """)
+    cursor.execute(
+        "INSERT OR IGNORE INTO users VALUES (?, ?)",
+        ("unique_check", 0) # We use this because we only want to make one column via ignore by making a unique checker to block out any duplicate inserts.
+    )
+    connection.commit()
+    connection.close()
+    connection = sqlite3.connect(
         os.path.join(currentdirectory, "tasks_reloader.db")
     )
     cursor = connection.cursor()
@@ -1008,6 +1040,7 @@ def add_location():
             (inputted_location, user["username"])
         )
     return redirect("/settings")
+
 @app.route("/profile", methods=["POST"])
 def profile_page_check():
     user = session.get("user")
@@ -1055,6 +1088,25 @@ def profile_page_check():
                 names.append(friend["username"])    # This will turn the whole jumble dict into a bunch of names.
         friend_count = len(names)
         exist = len(names) > 0
+        current_skills = []
+        with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection_skills:
+                connection_skills.row_factory = sqlite3.Row
+                skills_owned = connection_skills.execute(
+                    "SELECT skill, total_holes_dug FROM skills WHERE username = ? ORDER BY total_holes_dug DESC",
+                    (user["username"],)
+                ).fetchall()
+
+
+        for x in range(len(skills_owned)):
+            current_skills.append(skills_owned[x][0])
+
+        with sqlite3.connect(os.path.join(currentdirectory, "tasks_completed_today.db")) as connection_friends:
+            connection_friends.row_factory = sqlite3.Row
+            tasks_complete_today = connection_friends.execute(
+                "SELECT * FROM tasks_completed_today WHERE username = ?",
+                (selected_user,)
+            ).fetchall()
+
         return render_template(
             "profile_page.html",
             user=user,
@@ -1062,7 +1114,9 @@ def profile_page_check():
             select_user_setting=select_user_setting,
             names=names,
             friend_count=friend_count,
-            exist=exist
+            exist=exist,
+            current_skills=current_skills,
+            tasks_complete_today=tasks_complete_today
         )
     else:
         return redirect("/")
@@ -1456,6 +1510,24 @@ def complete_task():
             """,
             (user["username"], selected_skill_completed)
         )
+    with sqlite3.connect(os.path.join(currentdirectory, "user_holes.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            UPDATE user_holes
+            SET total_holes_dug = total_holes_dug + 1
+            WHERE username = ?
+            """,
+            (user["username"],)
+        )
+    with sqlite3.connect(os.path.join(currentdirectory, "global_holes.db")) as connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                UPDATE global_holes
+                SET total_global_holes  = total_global_holes  + 1
+                """
+            )
         
     return redirect("/home_page")
 
@@ -1474,7 +1546,8 @@ def delete_task():
     with sqlite3.connect(
         os.path.join(currentdirectory, "tasks_reloader.db")
     ) as connection:
-        cursor = connection.execute(
+        cursor = connection.cursor()
+        cursor.execute(
             """
             DELETE FROM tasks_reloader
             WHERE username = ? AND task = ?
@@ -1500,4 +1573,4 @@ if __name__ == "__main__":
 # TODO Add a fun little side not below all of this like the bio but shorter below daily activity.
 # TODO Daily activities are the history of the activities done in that day laid out like people search
 # TODO Holes dug today and overall on the profile
-# TODO Add the task adder on homepage. HARDEST SEGMENT PROBABLY. 
+# DONE Add the task adder on homepage. HARDEST SEGMENT PROBABLY. 
