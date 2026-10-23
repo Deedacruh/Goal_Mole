@@ -11,6 +11,7 @@
         </header>
         <h1>
             <form action="/sign_up" method="POST">
+                <input type="hidden" name="timezone" id="timezone">
 
                 <p name="message" id="message">{{  message  }}</p>
 
@@ -30,5 +31,11 @@
             <p>Already have an account? <a href="/sign_in">sign in here</a>!</p>
         </h2>
     </body>
+    <script>
+        document.querySelector("form").addEventListener("submit", function () {
+            document.getElementById("timezone").value =
+                Intl.DateTimeFormat().resolvedOptions().timeZone;
+        });
+    </script>
     <script src="introScript.js" defer></script>
 </html>

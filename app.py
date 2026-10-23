@@ -306,15 +306,15 @@ def sign_up():
     user = cursor.fetchone()
     # gets the first row that appears. You can also use these to do the sign up.
     if not user and password == confirm_password:
-        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection_requests:
-            connection_requests.row_factory = sqlite3.Row
-            result = connection_requests.execute(
-                "SELECT timezone FROM user_settings WHERE username = ?",
-                (username,)
-            ).fetchone()
-        timezone = result[0] if result and result[0] else "UTC"
-        current_time = datetime.now(ZoneInfo(timezone))
-        current_date = current_time.date()
+        timezone = request.form.get("timezone") or "UTC"
+
+        try:
+            current_time = datetime.now(ZoneInfo(timezone))
+        except (ZoneInfoNotFoundError, ValueError):
+            timezone = "UTC"
+            current_time = datetime.now(ZoneInfo("UTC"))
+
+        current_date = current_time.date().isoformat()
 
         connection = sqlite3.connect(
             os.path.join(currentdirectory, "user_settings.db")
@@ -322,7 +322,7 @@ def sign_up():
         cursor = connection.cursor()
         cursor.execute(
             "INSERT INTO user_settings VALUES (?, ?, ?, ?, ? ,?, ?, ?, ?, ?)",
-            (username, "", "dark", "", "", "", "", "", None, current_date) # CURRENT DATE SHOWS +1 DAY TODO FIX
+            (username, "", "dark", "", "", "", "", "", timezone, current_date) # CURRENT DATE SHOWS +1 DAY TODO FIX
             # dark is the background setting and username is the user and the "" is the image we are working with, the other stuff are "" because it is blank when first initialized
         )
         connection.commit()
@@ -1146,7 +1146,7 @@ def home_page():
         return redirect("/")
     daily_tasks = []
     current_day = datetime.now().strftime("%A").lower()
-    day_of_month = datetime.now().day
+    day_of_month = datetime.now().date().isoformat()
     for db in ["tasks_today.db", "tasks_reloader.db"]:
         connection = sqlite3.connect(db)
         tables = connection.execute(
@@ -1259,9 +1259,10 @@ def home_page():
                 SELECT task
                 FROM completed_db.tasks_completed_today
                 WHERE username = ?
+                AND day_of_month_completed = ?
             )
             """,
-            (user["username"], user["username"])
+            (user["username"], user["username"], day_of_month)
         ).fetchall()
 
     return render_template(
@@ -1271,8 +1272,6 @@ def home_page():
         current_tasks=current_tasks
     )
         
-    return render_template("home_page.html", user=user, current_skills=current_skills, current_tasks=current_tasks)
-
 @app.route("/add_task", methods=["POST"])
 def add_task():
     user = session.get("user")
@@ -1280,32 +1279,95 @@ def add_task():
     if not user:
         return redirect("/")
 
-    day_of_month = datetime.now().day
+    day_of_month = datetime.now().date().isoformat()
 
-    task_input = request.args.get("task_input").strip()
-    selected_skill = request.args.get("skills_radio")
-    selected_habit = request.args.get("habitual_radio")
+    task_input = request.form.get("task_input", "").strip()
+    selected_skill = request.form.get("skills_radio")
+    selected_habit = request.form.get("habitual_radio")
 
-    if task_input == None:
+    if not task_input:
         error_message = "Please input the task you want to add."
-        return render_template("home_page.html", error_message=error_message)
-    elif selected_skill == None:
+    elif not selected_skill:
         error_message = "Please select a skill."
-        return render_template("home_page.html", error_message=error_message)
-    elif selected_habit == None:
+    elif not selected_habit:
         error_message = "Please select a recurrence."
-        return render_template("home_page.html", error_message=error_message)
-    with sqlite3.connect("tasks_reloader.db") as connection:
+    else:
+        error_message = None
+
+    if error_message:
+        with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+            current_skills = connection.execute(
+                "SELECT skill FROM skills WHERE username = ?",
+                (user["username"],)
+            ).fetchall()
+        current_skills = [skill[0] for skill in current_skills]
+
+        with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection:
+            connection.row_factory = sqlite3.Row
+            connection.execute(
+                "ATTACH DATABASE ? AS completed_db",
+                (os.path.join(currentdirectory, "tasks_completed_today.db"),)
+            )
+            day_of_month = datetime.now().date().isoformat()
+
+            current_tasks = connection.execute(
+                """
+                SELECT *
+                FROM tasks_today
+                WHERE username = ?
+                AND task NOT IN (
+                    SELECT task
+                    FROM completed_db.tasks_completed_today
+                    WHERE username = ?
+                    AND day_of_month_completed = ?
+                )
+                """,
+                (user["username"], user["username"], day_of_month)
+            ).fetchall()
+
+        return render_template(
+            "home_page.html",
+            user=user,
+            current_skills=current_skills,
+            current_tasks=current_tasks,
+            error_message=error_message
+        )
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_reloader.db")) as connection:
+        cursor = connection.cursor()
         cursor.execute(
             "SELECT * FROM tasks_reloader WHERE username = ?",
             (user["username"],)
         )
 
         tasks = cursor.fetchall()
-    if len(tasks) > 75:
-        error_message = "Over 75 scheduled tasks! Please remove a tasks to add this task."
-        return render_template("home_page.html", error_message=error_message)
-    with sqlite3.connect("tasks_reloader.db") as connection:
+    if len(tasks) >= 75:
+        error_message = "Over 75 scheduled tasks! Please remove a task to add this task."
+
+        # Load the skills again for home_page.html
+        with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+            current_skills = connection.execute(
+                "SELECT skill FROM skills WHERE username = ?",
+                (user["username"],)
+            ).fetchall()
+        current_skills = [skill[0] for skill in current_skills]
+
+        # Load the tasks again for home_page.html
+        with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection:
+            connection.row_factory = sqlite3.Row
+            current_tasks = connection.execute(
+                "SELECT * FROM tasks_today WHERE username = ?",
+                (user["username"],)
+            ).fetchall()
+
+        return render_template(
+            "home_page.html",
+            user=user,
+            current_skills=current_skills,
+            current_tasks=current_tasks,
+            error_message=error_message
+        )
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_reloader.db")) as connection:
+        cursor = connection.cursor()
         cursor.execute(
             "SELECT task FROM tasks_reloader WHERE username = ?",
             (user["username"],)
@@ -1313,10 +1375,30 @@ def add_task():
         task = cursor.fetchall()
 
     for x in task:
-        if x[0] == task_input:
-            error_message = "No duplicate tasks!"
-            return render_template("home_page.html", error_message=error_message)
-        
+        if x[0].strip().lower() == task_input.lower():
+            error_message = "Task has already been created!"
+
+            with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+                current_skills = connection.execute(
+                    "SELECT skill FROM skills WHERE username = ?",
+                    (user["username"],)
+                ).fetchall()
+            current_skills = [skill[0] for skill in current_skills]
+
+            with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection:
+                connection.row_factory = sqlite3.Row
+                current_tasks = connection.execute(
+                    "SELECT * FROM tasks_today WHERE username = ?",
+                    (user["username"],)
+                ).fetchall()
+
+            return render_template(
+                "home_page.html",
+                user=user,
+                current_skills=current_skills,
+                current_tasks=current_tasks,
+                error_message=error_message
+            )
     connection = sqlite3.connect(
         os.path.join(currentdirectory, "tasks_reloader.db")
     )
@@ -1328,6 +1410,8 @@ def add_task():
     connection.commit()
     connection.close()
 
+    return redirect("/home_page")
+
 @app.route("/complete_task", methods=["POST"])
 def complete_task():
     user = session.get("user")
@@ -1335,6 +1419,71 @@ def complete_task():
     if not user:
         return redirect("/")
     
+    day_of_month = datetime.now().date().isoformat()
+
+    selected_skill_completed = request.form.get("selected_skill_completed")
+    selected_task_completed = request.form.get("selected_task_completed")
+    if not selected_task_completed or not selected_skill_completed:
+        return redirect("/home_page")
+
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_completed_today.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "DELETE  FROM tasks_completed_today WHERE username = ? AND day_of_month_completed != ?",
+            (user["username"], day_of_month)
+        )
+    
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_completed_today.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO tasks_completed_today VALUES(?, ?, ?, ?)",
+            (user["username"], selected_task_completed, selected_skill_completed, day_of_month)
+        )
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "DELETE  FROM tasks_today WHERE username = ? AND task = ?",
+            (user["username"], selected_task_completed)
+        )
+
+    with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            UPDATE skills
+            SET total_holes_dug = total_holes_dug + 1
+            WHERE username = ? AND skill = ?;
+            """,
+            (user["username"], selected_skill_completed)
+        )
+        
+    return redirect("/home_page")
+
+@app.route("/delete_task", methods=["POST"])
+def delete_task():
+    user = session.get("user")
+
+    if not user:
+        return redirect("/")
+
+    selected_task_deleted = request.form.get("selected_task_deleted", "").strip()
+
+    if not selected_task_deleted:
+        return redirect("/home_page")
+
+    with sqlite3.connect(
+        os.path.join(currentdirectory, "tasks_reloader.db")
+    ) as connection:
+        cursor = connection.execute(
+            """
+            DELETE FROM tasks_reloader
+            WHERE username = ? AND task = ?
+            """,
+            (user["username"], selected_task_deleted)
+        )
+
+    return redirect("/home_page")
+
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
