@@ -11,45 +11,61 @@
 
     <style>
         /* =========================
-           PROFILE LAYOUT
+           PAGE LAYOUT
         ========================= */
+
+        * {
+            box-sizing: border-box;
+        }
 
         .profile-dashboard {
             margin-left: 260px;
-            padding: 35px;
-            box-sizing: border-box;
+            width: calc(100% - 260px);
             min-height: 100vh;
+            padding: clamp(14px, 2.2vw, 35px);
             color: inherit;
         }
 
         .profile-main {
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
-            width: min(100%, 912px);
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr);
+            grid-template-areas:
+                "header skills"
+                "bio skills"
+                "completed skills";
+            align-items: start;
+            gap: clamp(14px, 1.5vw, 24px);
+            width: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .profile-main > * {
             min-width: 0;
+            max-width: 100%;
         }
 
         /* =========================
-           GLASS WIDGETS
+           SHARED WIDGET STYLE
         ========================= */
 
         .profile-widget {
-            background: rgba(25, 25, 45, 0.66);
+            min-width: 0;
+            padding: clamp(16px, 1.8vw, 28px);
+            border: 1px solid rgba(160, 150, 255, 0.23);
+            border-radius: clamp(12px, 1.1vw, 20px);
+            background: rgba(25, 25, 45, 0.78);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(160, 150, 255, 0.23);
-            border-radius: 18px;
-            padding: 25px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            box-sizing: border-box;
-            min-width: 0;
             overflow-wrap: anywhere;
         }
 
         .profile-widget h2 {
-            font-size: 1.15rem;
-            margin: 0 0 18px;
+            margin: 0 0 clamp(12px, 1.2vw, 18px);
+            font-size: clamp(1rem, 1.1vw, 1.2rem);
+            line-height: 1.4;
+            overflow-wrap: anywhere;
         }
 
         /* =========================
@@ -57,19 +73,21 @@
         ========================= */
 
         .profile-header {
+            grid-area: header;
             display: flex;
             align-items: center;
-            gap: 28px;
-            padding: 30px;
+            gap: clamp(16px, 2vw, 30px);
+            padding: clamp(18px, 2vw, 32px);
         }
 
         .profile_pictures {
-            width: 125px;
-            height: 125px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 3px solid rgba(166, 145, 255, 0.8);
+            display: block;
+            width: clamp(80px, 9vw, 140px);
+            height: clamp(80px, 9vw, 140px);
             flex-shrink: 0;
+            object-fit: cover;
+            border: 3px solid rgba(166, 145, 255, 0.8);
+            border-radius: 50%;
         }
 
         .profile-identity {
@@ -78,8 +96,16 @@
         }
 
         .profile-identity h1 {
-            font-size: clamp(1.8rem, 3vw, 2.5rem);
-            margin: 0 0 18px;
+            margin: 0 0 16px;
+            font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .profile-identity > h2 {
+            margin: 0 0 10px;
+            font-size: clamp(0.9rem, 1.1vw, 1.15rem);
             overflow-wrap: anywhere;
         }
 
@@ -90,8 +116,8 @@
         .profile-meta {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-            margin-top: 15px;
+            gap: clamp(8px, 0.8vw, 13px);
+            margin-top: 16px;
         }
 
         .profile-info-item {
@@ -99,37 +125,147 @@
             flex-direction: column;
             gap: 6px;
             min-width: 0;
-            padding: 11px 13px;
+            padding: clamp(9px, 1vw, 14px);
+            border: 1px solid rgba(160, 150, 255, 0.18);
             border-radius: 11px;
             background: rgba(145, 130, 255, 0.12);
-            border: 1px solid rgba(160, 150, 255, 0.18);
             overflow-wrap: anywhere;
         }
 
         .profile-info-item > span:last-child {
             line-height: 1.5;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .detail-label {
-            font-size: 0.8rem;
+            font-size: clamp(0.72rem, 0.85vw, 0.85rem);
             opacity: 0.7;
         }
 
         .empty-value {
             opacity: 0.65;
             font-style: italic;
+            overflow-wrap: anywhere;
         }
 
         /* =========================
-           BIO WIDGET
+           BIO
         ========================= */
 
+        .profile-bio-widget {
+            grid-area: bio;
+            min-width: 0;
+        }
+
         .profile-bio {
+            margin: 0;
+            font-size: clamp(0.9rem, 1vw, 1rem);
             line-height: 1.8;
             white-space: pre-wrap;
             overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* =========================
+           COMPLETED TASKS
+           Same column width as bio
+        ========================= */
+
+        .profile-completed-widget {
+            grid-area: completed;
+            min-width: 0;
+        }
+
+        .profile-completed-list {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(8px, 0.8vw, 13px);
+            min-width: 0;
+        }
+
+        .task_complete_card {
+            display: grid;
+            grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+            align-items: start;
+            gap: clamp(8px, 1vw, 15px);
+            width: 100%;
+            min-width: 0;
+            padding: clamp(10px, 1vw, 15px);
+            border: 1px solid rgba(160, 150, 255, 0.18);
+            border-radius: 11px;
+            background: rgba(145, 130, 255, 0.12);
+        }
+
+        .task_complete_skill,
+        .task_complete_task {
+            min-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .task_complete_card h2 {
             margin: 0;
-            font-size: 1rem;
+            font-size: clamp(0.85rem, 1vw, 1.05rem);
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* =========================
+           SKILLS — RIGHT COLUMN
+        ========================= */
+
+        .profile-skills-widget {
+            grid-area: skills;
+            min-width: 0;
+        }
+
+        .profile-skills-list {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(8px, 0.8vw, 13px);
+            min-width: 0;
+        }
+
+        /* One horizontal row per skill */
+        .skill-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            min-width: 0;
+            padding: clamp(10px, 1vw, 15px);
+            border: 1px solid rgba(160, 150, 255, 0.18);
+            border-radius: 11px;
+            background: rgba(145, 130, 255, 0.12);
+        }
+
+        .skill-name {
+            min-width: 0;
+            margin: 0;
+            font-size: clamp(0.85rem, 1vw, 1.05rem);
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .skill-holes {
+            flex-shrink: 0;
+            margin: 0;
+            font-size: clamp(0.85rem, 1vw, 1.05rem);
+            font-weight: 700;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .skill-holes-label {
+            display: block;
+            margin-top: 3px;
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.7;
         }
 
         /* =========================
@@ -137,13 +273,15 @@
         ========================= */
 
         body.light .profile-widget {
-            background: rgba(255, 255, 255, 0.68);
-            border-color: rgba(80, 70, 120, 0.18);
             color: #25233a;
+            background: rgba(255, 255, 255, 0.78);
+            border-color: rgba(80, 70, 120, 0.18);
             box-shadow: 0 8px 30px rgba(30, 20, 60, 0.08);
         }
 
-        body.light .profile-info-item {
+        body.light .profile-info-item,
+        body.light .task_complete_card,
+        body.light .skill-row {
             background: rgba(110, 85, 220, 0.08);
             border-color: rgba(110, 85, 220, 0.16);
         }
@@ -153,61 +291,101 @@
         ========================= */
 
         body.dark .profile-widget {
-            background: rgba(35, 32, 45, 0.78);
-            border-color: rgba(160, 150, 255, 0.22);
             color: #f0eeff;
+            background: rgba(35, 32, 45, 0.82);
+            border-color: rgba(160, 150, 255, 0.22);
         }
 
-        body.dark .profile-info-item {
+        body.dark .profile-info-item,
+        body.dark .task_complete_card,
+        body.dark .skill-row {
             background: rgba(145, 130, 255, 0.12);
             border-color: rgba(160, 150, 255, 0.18);
         }
 
         /* =========================
-           RESPONSIVE LAYOUT
+           WALLPAPER
+           The body image remains visible
         ========================= */
 
-        @media (max-width: 900px) {
+        body {
+            min-height: 100vh;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* =========================
+           TABLETS
+        ========================= */
+
+        @media (max-width: 1050px) {
             .profile-dashboard {
-                padding: 25px;
+                padding: 2vw;
             }
 
             .profile-main {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 650px) {
-            .profile-dashboard {
-                padding: 15px;
+                grid-template-columns: minmax(0, 1.5fr) minmax(220px, 1fr);
+                gap: 1.5vw;
             }
 
             .profile-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 20px;
-                padding: 22px;
+                gap: 1.5vw;
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 760px) {
+            .profile-dashboard {
+                margin-left: 0;
+                width: 100%;
+                padding: clamp(12px, 3vw, 22px);
+            }
+
+            .profile-main {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-areas:
+                    "header"
+                    "bio"
+                    "completed"
+                    "skills";
+                gap: clamp(12px, 3vw, 20px);
+            }
+
+            .profile-header {
+                gap: clamp(12px, 3vw, 20px);
             }
 
             .profile_pictures {
-                width: 100px;
-                height: 100px;
+                width: clamp(75px, 18vw, 110px);
+                height: clamp(75px, 18vw, 110px);
+            }
+        }
+
+        /* =========================
+           VERY NARROW PHONES
+        ========================= */
+
+        @media (max-width: 420px) {
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
             .profile-identity {
                 width: 100%;
             }
 
-            .profile-identity h1 {
-                font-size: 1.7rem;
-            }
-
             .profile-meta {
                 grid-template-columns: minmax(0, 1fr);
             }
 
-            .profile-widget {
-                padding: 19px;
+            .task_complete_card {
+                grid-template-columns: minmax(0, 1fr);
             }
         }
     </style>
@@ -215,60 +393,34 @@
 
 <body class="{{ select_user_setting[1] }}">
 
-    <!-- EXISTING WALLPAPER LOGIC -->
     {% if select_user_setting[0] != "empty" %}
         <style>
             body {
                 background-image: url("{{ url_for('get_wallpaper_picture', username=selected_user) }}");
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                min-height: 100vh;
-                color: white;
             }
         </style>
     {% endif %}
 
-    <!-- SIDEBAR: KEPT AS-IS -->
+    <!-- SIDEBAR -->
     <div id="sidebar">
         <h1 class="sidebar_title">Goal Mole</h1>
 
         <nav class="sidebar_nav">
-            <a class="sidebar_button" href="/home_page">
-                Home
-            </a>
-
-            <a class="sidebar_button" href="/friends">
-                Friends
-            </a>
-
-            <a class="sidebar_button" href="/friend_requests">
-                Friend requests
-            </a>
-
-            <a class="sidebar_button" href="/people_search">
-                Search for friends
-            </a>
-
-            <a class="sidebar_button" href="/settings">
-                Settings
-            </a>
-
-            <a class="sidebar_button logout_button" href="/log_out">
-                Log out
-            </a>
+            <a class="sidebar_button" href="/home_page">Home</a>
+            <a class="sidebar_button" href="/friends">Friends</a>
+            <a class="sidebar_button" href="/friend_requests">Friend requests</a>
+            <a class="sidebar_button" href="/people_search">Search for friends</a>
+            <a class="sidebar_button" href="/settings">Settings</a>
+            <a class="sidebar_button logout_button" href="/log_out">Log out</a>
         </nav>
     </div>
 
     <!-- PROFILE CONTENT -->
     <main class="profile-dashboard">
-
         <section class="profile-main">
 
-            <!-- USERNAME AND ALL PERSONAL INFORMATION -->
+            <!-- PROFILE HEADER -->
             <div class="profile-widget profile-header">
-
                 <img
                     class="profile_pictures"
                     src="{{ url_for('get_profile_picture', username=selected_user) }}"
@@ -276,23 +428,17 @@
                 >
 
                 <div class="profile-identity">
-
                     <h1>@{{ selected_user }}</h1>
-                    <h2> <!-- Markes the date that the user created the account -->
-                        Date joined: {{  select_user_setting[7]  }}
-                    </h2>
-                    {% if exist %}
-                        <h2>
-                            {{  friend_count  }} Friends
-                        </h2>
-                    {% else %}
-                        <h2>
-                            0 Friends
-                        </h2>
-                    {% endif %}
-                    <div class="profile-meta">
 
-                        <!-- Pronouns -->
+                    <h2>Date joined: {{ select_user_setting[7] }}</h2>
+                    
+                    {% if exist %}
+                        <h2>{{ friend_count }} Friends</h2>
+                    {% else %}
+                        <h2>0 Friends</h2>
+                    {% endif %}
+                    <h2>Total holes dug: {{ total_holes_dug }}</h2>
+                    <div class="profile-meta">
                         <div class="profile-info-item">
                             <span class="detail-label">Pronouns</span>
                             <span>
@@ -304,7 +450,6 @@
                             </span>
                         </div>
 
-                        <!-- Job -->
                         <div class="profile-info-item">
                             <span class="detail-label">Job</span>
                             <span>
@@ -316,7 +461,6 @@
                             </span>
                         </div>
 
-                        <!-- Location -->
                         <div class="profile-info-item">
                             <span class="detail-label">Location</span>
                             <span>
@@ -328,7 +472,6 @@
                             </span>
                         </div>
 
-                        <!-- Public email -->
                         <div class="profile-info-item">
                             <span class="detail-label">Public email</span>
                             <span>
@@ -339,51 +482,59 @@
                                 {% endif %}
                             </span>
                         </div>
-
                     </div>
                 </div>
             </div>
-            <!-- TASKS COMPLETED: EACH WIDGET AS ONE LINE WITH INFO. EACH ONE HAS SAME WIDTH AS BIO WIDGET-->
-            {% for item_selector in tasks_complete_today %}
-                <div class="task_complete_card">
-                    <div class="task_complete_skill">
-                        <h2>{{  item_selector["skill"]  }}</h2>
-                    </div>
-                    <div class="task_complete_task">
-                        <h2>{{  item_selector["task"]  }}</h2>
-                    </div>
-                </div>
-            {% endfor %}
-            <!-- BIO: ITS OWN WIDGET -->
-            <div class="profile-widget">
 
+            <!-- BIO -->
+            <div class="profile-widget profile-bio-widget">
                 <h2>About</h2>
 
-                <p class="profile-bio">
-                    {% if select_user_setting[4] != "empty" and select_user_setting[4] %}
-                        {{ select_user_setting[4] }}
-                    {% else %}
-                        This user hasn't written a bio yet.
-                    {% endif %}
-                </p>
-
+                <p class="profile-bio">{% if select_user_setting[4] != "empty" and select_user_setting[4] %}{{ select_user_setting[4] }}{% else %}This user hasn't written a bio yet.{% endif %}</p>
             </div>
-            <!-- CURRENT SKILLS: EACH WIDGET AS ONE LINE WITH INFO. EACH ONE TAKES OVER THE RIGHT SIDE OF THE PROFILE -->
-            {% for current_skill in current_skills %}
-                
-                <div class="task_complete_card">
-                    <div class="task_complete_skill">
-                        <h2>{{  current_skill["skill"]  }}</h2>
-                    </div>
-                    <div class="task_complete_task">
-                        <h2>{{  current_skill["total_holes_dug"]  }}</h2>
-                    </div>
-                </div>
-            {% endfor %}
 
+            <!-- TASKS COMPLETED TODAY: SAME WIDTH AS BIO -->
+            <div class="profile-widget profile-completed-widget">
+                <h2>Tasks Completed Today</h2>
+
+                <div class="profile-completed-list">
+                    {% for item_selector in tasks_complete_today %}
+                        <div class="task_complete_card">
+                            <div class="task_complete_skill">
+                                <h2>{{ item_selector["skill"] }}</h2>
+                            </div>
+
+                            <div class="task_complete_task">
+                                <h2>{{ item_selector["task"] }}</h2>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="empty-value">No tasks completed today.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- SKILLS: RIGHT SIDE, ONE LINE PER SKILL -->
+            <div class="profile-widget profile-skills-widget">
+                <h2>Skills</h2>
+
+                <div class="profile-skills-list">
+                    {% for current_skill in current_skills %}
+                        <div class="skill-row">
+                            <h2 class="skill-name">{{ current_skill["skill"] }}</h2>
+
+                            <p class="skill-holes">
+                                {{ current_skill["total_holes_dug"] }}
+                                <span class="skill-holes-label">holes dug</span>
+                            </p>
+                        </div>
+                    {% else %}
+                        <p class="empty-value">No skills to show.</p>
+                    {% endfor %}
+                </div>
+            </div>
 
         </section>
-
     </main>
 
 </body>

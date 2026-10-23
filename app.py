@@ -148,22 +148,24 @@ def sign_up():
     """)
     cursor.execute(
         "INSERT INTO user_holes VALUES (?, ?)",
-        (user["username"], 0)
+        (username, 0)
     )
     connection.commit()
     connection.close()
+
     connection = sqlite3.connect(
         os.path.join(currentdirectory, "global_holes.db")
     )
+
     cursor = connection.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS global_holes(
-            unique_test TEST UNIQUE
+            unique_test TEST UNIQUE,
             total_global_holes INT
         )
     """)
     cursor.execute(
-        "INSERT OR IGNORE INTO users VALUES (?, ?)",
+        "INSERT OR IGNORE INTO global_holes VALUES (?, ?)",
         ("unique_check", 0) # We use this because we only want to make one column via ignore by making a unique checker to block out any duplicate inserts.
     )
     connection.commit()
@@ -1086,27 +1088,37 @@ def profile_page_check():
                 names.append(friend["receiver"])
             elif friend["receiver"] == selected_user and friend["username"]:
                 names.append(friend["username"])    # This will turn the whole jumble dict into a bunch of names.
-        friend_count = len(names)
-        exist = len(names) > 0
+        friend_count = len(set(names)) # just encase of a duplicate
+        exist = friend_count > 0
         current_skills = []
         with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection_skills:
-                connection_skills.row_factory = sqlite3.Row
-                skills_owned = connection_skills.execute(
-                    "SELECT skill, total_holes_dug FROM skills WHERE username = ? ORDER BY total_holes_dug DESC",
-                    (user["username"],)
-                ).fetchall()
+            connection_skills.row_factory = sqlite3.Row
 
-
-        for x in range(len(skills_owned)):
-            current_skills.append(skills_owned[x][0])
-
+            current_skills = connection_skills.execute(
+                """
+                SELECT skill, total_holes_dug
+                FROM skills
+                WHERE username = ?
+                ORDER BY total_holes_dug DESC
+                """,
+                (selected_user,)
+            ).fetchall()
         with sqlite3.connect(os.path.join(currentdirectory, "tasks_completed_today.db")) as connection_friends:
             connection_friends.row_factory = sqlite3.Row
             tasks_complete_today = connection_friends.execute(
                 "SELECT * FROM tasks_completed_today WHERE username = ?",
                 (selected_user,)
             ).fetchall()
-
+        with sqlite3.connect(os.path.join(currentdirectory, "user_holes.db")) as connection_holes_dug:
+            connection_holes_dug.row_factory = sqlite3.Row
+            total_holes_dug = connection_holes_dug.execute(
+                "SELECT total_holes_dug FROM user_holes WHERE username = ?",
+                (selected_user,)
+            ).fetchone()
+        if total_holes_dug:
+            total_holes_dug = total_holes_dug["total_holes_dug"]
+        else:
+            total_holes_dug = 0
         return render_template(
             "profile_page.html",
             user=user,
@@ -1116,7 +1128,8 @@ def profile_page_check():
             friend_count=friend_count,
             exist=exist,
             current_skills=current_skills,
-            tasks_complete_today=tasks_complete_today
+            tasks_complete_today=tasks_complete_today,
+            total_holes_dug=total_holes_dug
         )
     else:
         return redirect("/")
