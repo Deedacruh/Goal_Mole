@@ -37,6 +37,12 @@
                 <h2>@{{ name }}</h2>
                 <span class="friend-card-subtitle">Part of your orbit</span>
             </div>
+            <form action="/profile" method="POST"> <!--Maybe change this an a href and make sure it goes to get-->
+                <input type="hidden" name="selected_profile_user" value="{{ name }}">
+                <button class="view_profile_button_search">
+                    Profile
+                </button>
+            </form>
         </div>
     {% endfor %}
 
@@ -196,7 +202,116 @@
             gap: 0.6rem;
         }
     }
+    /* Responsive Profile Button */
+    .view_profile_button_search {
+        /* Flexible placement */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        align-self: center;
 
+        /* Flexible sizing */
+        width: fit-content;
+        max-width: 100%;
+        min-height: clamp(2.25rem, 4.5vh, 3.25rem);
+        padding: clamp(0.5rem, 1.2vw, 0.85rem)
+                clamp(0.8rem, 2vw, 1.5rem);
+
+        /* Appearance */
+        color: #f5edff;
+        background: linear-gradient(
+            135deg,
+            #a66bff,
+            #7644bd
+        );
+
+        border: 1px solid rgba(210, 180, 255, 0.5);
+        border-radius: clamp(0.5rem, 1vw, 0.85rem);
+
+        /* Responsive typography */
+        font-family: Arial, "Helvetica Neue", sans-serif;
+        font-size: clamp(0.8rem, 1vw + 0.2rem, 1rem);
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+
+        cursor: pointer;
+
+        box-shadow: 0 0.25rem 0.8rem rgba(130, 75, 210, 0.2);
+
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    /* Hover */
+    .view_profile_button_search:hover {
+        background: linear-gradient(
+            135deg,
+            #bd91ff,
+            #9360df
+        );
+
+        border-color: rgba(230, 210, 255, 0.85);
+        box-shadow: 0 0.35rem 1rem rgba(155, 90, 255, 0.35);
+        transform: translateY(-0.1rem);
+    }
+
+    /* Click */
+    .view_profile_button_search:active {
+        transform: scale(0.97);
+    }
+
+    /* Keyboard accessibility */
+    .view_profile_button_search:focus-visible {
+        outline: 2px solid #d7baff;
+        outline-offset: 0.2rem;
+    }
+
+    /* Tablet sizing */
+    @media (max-width: 56.25rem) {
+        .view_profile_button_search {
+            font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+            padding: 0.65rem clamp(0.8rem, 1.8vw, 1.2rem);
+        }
+    }
+
+    /* Phone sizing */
+    @media (max-width: 37.5rem) {
+        .view_profile_button_search {
+            min-height: 2.5rem;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.85rem;
+            border-radius: 0.6rem;
+        }
+    }
+
+    /* Light wallpaper support */
+    body.light .view_profile_button_search {
+        color: #ffffff;
+        background: linear-gradient(135deg, #8950d5, #6935ad);
+        border-color: rgba(105, 53, 173, 0.4);
+    }
+
+    body.light .view_profile_button_search:hover {
+        background: linear-gradient(135deg, #a16be8, #7945bd);
+    }
+
+    /* Respect reduced-motion settings */
+    @media (prefers-reduced-motion: reduce) {
+        .view_profile_button_search {
+            transition: none;
+        }
+
+        .view_profile_button_search:hover,
+        .view_profile_button_search:active {
+            transform: none;
+        }
+    }
     /* Phones */
     @media (max-width: 600px) {
         .requests-result-search {

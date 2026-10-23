@@ -1159,10 +1159,12 @@ def add_task():
         return redirect("/")
 
     current_day = datetime.now().strftime("%A").lower()
+    day_of_month = datetime.now().day
 
     task_input = request.args.get("task_input")
     selected_skill = request.args.get("skills_radio")
     selected_habit = request.args.get("habitual_radio")
+
     if task_input == None:
         error_message = "Please input the task you want to add."
         return render_template("home_page.html", error_message=error_message)
@@ -1172,7 +1174,13 @@ def add_task():
     elif selected_habit == None:
         error_message = "Please select a recurrence."
         return render_template("home_page.html", error_message=error_message)
-    
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_reloader.db")) as connection_tasks_reloader:
+        connection_tasks_reloader.row_factory = sqlite3.Row
+        tasks_reloader_tasks = connection_tasks_reloader.execute(
+            "SELECT task FROM tasks_reloader WHERE username = ?",
+            (user["username"],)
+        ).fetchone()
+
     
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
