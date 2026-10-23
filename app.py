@@ -136,6 +136,21 @@ def sign_up():
         as a jpeg with a quality of 80.
     """
     connection = sqlite3.connect(
+        os.path.join(currentdirectory, "tasks_reloader.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tasks_reloader(
+            username TEXT NOT NULL,
+            task TEXT,
+            skill TEXT,
+            recurrence TEXT
+        )
+    """)
+    # Recurrence is weekday it was created or like every day or month
+    connection.commit()
+    connection.close()
+    connection = sqlite3.connect(
         os.path.join(currentdirectory, "skills.db")
     )
     cursor = connection.cursor()
@@ -144,6 +159,35 @@ def sign_up():
             username TEXT NOT NULL,
             skill TEXT,
             total_holes_dug INT
+        )
+    """)
+    connection.commit()
+    connection.close()
+    connection = sqlite3.connect(
+        os.path.join(currentdirectory, "tasks_today.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tasks_today(
+            username TEXT NOT NULL,
+            task TEXT,
+            skill TEXT
+        )
+    """)
+    # If it's the next day then you would check the tasks_reloader 
+    # and see if the current day matches up with any task there first and then do full wipe and then reload based on weekday so the every days will be removed and re added if overdue.
+    connection.commit()
+    connection.close()
+    connection = sqlite3.connect(
+        os.path.join(currentdirectory, "tasks_completed_today.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tasks_completed_today(
+            username TEXT NOT NULL,
+            task TEXT,
+            skill TEXT,
+            day_of_month_completed TEXT
         )
     """)
     connection.commit()
@@ -1107,14 +1151,27 @@ def home_page():
     for x in range(len(skills_owned)):
         current_skills.append(skills_owned[x][0])
     return render_template("home_page.html", user=user, current_skills=current_skills)
-@app.route("/add_task", methods=["GET"])
+
+@app.route("/add_task", methods=["POST"])
 def add_task():
     user = session.get("user")
     if not user:
         return redirect("/")
+
+    current_day = datetime.now().strftime("%A").lower()
+
     task_input = request.args.get("task_input")
     selected_skill = request.args.get("skills_radio")
     selected_habit = request.args.get("habitual_radio")
+    if task_input == None:
+        error_message = "Please input the task you want to add."
+        return render_template("home_page.html", error_message=error_message)
+    elif selected_skill == None:
+        error_message = "Please select a skill."
+        return render_template("home_page.html", error_message=error_message)
+    elif selected_habit == None:
+        error_message = "Please select a recurrence."
+        return render_template("home_page.html", error_message=error_message)
     
     
 # Keep this at the bottom. This is what starts the server.
