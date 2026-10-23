@@ -3,27 +3,136 @@
 {% block title %}Goal Mole: Home Page{% endblock %}
 
 {% block content %}
-        </div>
+
+<div class="homepage-user-area">
+
+    <div class="homepage-user-info">
         <h1 id="home_page_username">@{{ user["username"] }}</h1>
-        <img class="profile_pictures" id="pfp_homepage" src="{{ url_for('get_profile_picture', username=session['user']['username']) }}">
-        <form action="/profile"> <!--Maybe change this an a href and make sure it goes to get-->
-            <input type="hidden" name="selected_profile_user" value="{{  user['username']  }}">
+
+        <form action="/profile" method="POST" class="homepage-profile-form">
+            <input type="hidden" name="selected_profile_user" value="{{ user['username'] }}">
+
             <button class="view_profile_button_home_page">
-                View profile
+                View profile ↗
             </button>
         </form>
-        <!-- this img automatically sends the action that this url resides in flask. In this case, it is a function called get_profile_picture. -->
+    </div>
 
-        <!-- Our session looks like this
-            session = {
-                "user": {
-                    "username": "Ted"
-                }
-            }
-        
-        TODO CHANGE THE SESSION. 
-        -->
+    <img
+        class="profile_pictures"
+        id="pfp_homepage"
+        src="{{ url_for('get_profile_picture', username=session['user']['username']) }}"
+    >
 
-        <!-- this route should clear the session and redirect -->
-    <script src="introScript.js" defer></script>
+</div>
+
+<style>
+    .homepage-user-area {
+        position: fixed;
+        top: clamp(12px, 2.8vh, 30px);
+        right: clamp(12px, 2.2vw, 35px);
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: clamp(5px, 0.6vw, 10px);
+
+        z-index: 100;
+    }
+
+    .homepage-user-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        gap: clamp(2px, 0.4vh, 5px);
+    }
+
+    #home_page_username {
+        position: relative;
+        left: 0.4vw;
+    }
+
+    #pfp_homepage {
+        display: block;
+        position: static;
+
+        width: clamp(42px, 3.5vw, 64px);
+        height: clamp(42px, 3.5vw, 64px);
+
+        flex-shrink: 0;
+        object-fit: cover;
+
+        border-radius: 50%;
+        border: 2px solid rgba(190, 145, 255, 0.8);
+        box-shadow: 0 0 12px rgba(155, 90, 255, 0.2);
+    }
+
+    .homepage-profile-form {
+        display: block;
+        width: auto;
+        margin: 0;
+        padding: 0;
+    }
+
+    .view_profile_button_home_page {
+        display: block;
+        width: auto;
+        margin: 0;
+        position: relative;
+
+        transform: translateY(clamp(-40px, -4vh, -4px)); /* Watch out of this one. */
+
+        padding: clamp(4px, 0.45vh, 7px)
+                clamp(7px, 0.65vw, 12px);
+
+        border: 1px solid rgba(190, 145, 255, 0.4);
+        border-radius: 8px;
+
+        background: rgba(115, 70, 170, 0.18);
+        color: #e8d9ff;
+
+        font-size: clamp(10px, 0.7vw, 13px);
+        line-height: 1.2;
+        font-weight: 600;
+
+        cursor: pointer;
+        white-space: nowrap;
+
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .view_profile_button_home_page:hover {
+        background: rgba(145, 90, 220, 0.3);
+        border-color: rgba(205, 170, 255, 0.85);
+    }
+
+    /* Smaller screens */
+    @media (max-width: 600px) {
+        .homepage-user-area {
+            top: 12px;
+            right: 12px;
+            gap: 6px;
+        }
+
+        #home_page_username {
+            font-size: clamp(13px, 3.5vw, 18px);
+            max-width: 40vw;
+        }
+
+        #pfp_homepage {
+            width: clamp(38px, 10vw, 48px);
+            height: clamp(38px, 10vw, 48px);
+        }
+
+        .view_profile_button_home_page {
+            padding: 5px 8px;
+            font-size: clamp(10px, 2.5vw, 12px);
+            border-radius: 7px;
+        }
+    }
+</style>
+
+<script src="introScript.js" defer></script>
+
 {% endblock %}
