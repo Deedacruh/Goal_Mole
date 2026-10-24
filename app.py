@@ -112,7 +112,7 @@ def home_page_blank():
     user = session.get("user")
 
     if user:
-        return render_template("home_page.html", user=user)
+        return redirect("/home_page")
 
     return render_template("front_page.html")
 
@@ -139,6 +139,20 @@ def sign_up():
         as a jpeg with a quality of 80.
     """
     connection = sqlite3.connect(
+        os.path.join(currentdirectory, "profile.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS profile(
+            username TEXT,
+            password TEXT,
+            profile_picture BLOB
+        )
+    """)
+    connection.commit()
+    connection.close()
+
+    connection = sqlite3.connect(
         os.path.join(currentdirectory, "user_holes.db")
     )
     cursor = connection.cursor()
@@ -148,10 +162,6 @@ def sign_up():
             total_holes_dug INT
         )
     """)
-    cursor.execute(
-        "INSERT INTO user_holes VALUES (?, ?)",
-        (username, 0)
-    )
     connection.commit()
     connection.close()
 
@@ -182,7 +192,7 @@ def sign_up():
             task TEXT,
             skill TEXT,
             recurrence TEXT,
-            every_month_day TEXT
+            every_month_day INT
         )
     """)
     # Recurrence is weekday it was created or like every day or month
@@ -256,6 +266,18 @@ def sign_up():
             receiver TEXT
         )
     """) #TODO We will have one connection with one person and another one sided and we just do a double check for each one to get each user's friends.
+    connection.commit()
+    connection.close()
+    connection = sqlite3.connect(
+        os.path.join(currentdirectory, "achievements.db")
+    )
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS achievements(
+            username TEXT NOT NULL,
+            achievement TEXT
+        )
+    """)
     connection.commit()
     connection.close()
     connection = sqlite3.connect(
@@ -366,6 +388,17 @@ def sign_up():
         # Username doesn't exist
         # Cursor is what you use to send commands to the database
         hashed_password = generate_password_hash(password)
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "user_holes.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO user_holes VALUES (?, ?)",
+            (username, 0)
+        )
+        connection.commit()
+        connection.close()
+
         connection = sqlite3.connect(
             os.path.join(currentdirectory, "profile.db")
         )
@@ -1137,6 +1170,16 @@ def profile_page_check():
             total_holes_dug = total_holes_dug["total_holes_dug"]
         else:
             total_holes_dug = 0
+
+        achievements = []
+        with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection_achievements:
+            connection_achievements.row_factory = sqlite3.Row
+            achievements_current = connection_achievements.execute(
+                "SELECT achievement FROM achievements WHERE username = ?",
+                (selected_user,)
+            ).fetchall()
+        for x in range(len(achievements_current)):
+            achievements.append(achievements_current[x][0])
         return render_template(
             "profile_page.html",
             user=user,
@@ -1147,7 +1190,8 @@ def profile_page_check():
             exist=exist,
             current_skills=current_skills,
             tasks_complete_today=tasks_complete_today,
-            total_holes_dug=total_holes_dug
+            total_holes_dug=total_holes_dug,
+            achievements=achievements
         )
     else:
         return redirect("/")
@@ -1230,18 +1274,21 @@ def home_page():
     if not user:
         return redirect("/")
     daily_tasks = []
-    current_day = datetime.now().strftime("%A").lower()
-    day_of_month = datetime.now().date().isoformat()
-    for db in ["tasks_today.db", "tasks_reloader.db"]:
-        connection = sqlite3.connect(db)
-        tables = connection.execute(
-            "SELECT name FROM sqlite_master WHERE type='table'"
-        ).fetchall()
-        print(db, tables)
-        connection.close()
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        result = connection.execute(
+            "SELECT timezone FROM user_settings WHERE username = ?",
+            (user["username"],)
+        ).fetchone()
 
-    current_month = datetime.now().month
-    current_year = datetime.now().year
+    timezone = result[0] if result and result[0] else "UTC"
+    current_time = datetime.now(ZoneInfo(timezone))
+
+    current_day = current_time.strftime("%A").lower()
+    day_of_month = current_time.day
+    current_date = current_time.date().isoformat()
+
+    current_month = current_time.month
+    current_year = current_time.year
 
     days_in_month = calendar.monthrange(current_year, current_month)[1] # use of calendar to get days in month
     current_skills = []
@@ -1274,7 +1321,7 @@ def home_page():
             "SELECT total_global_holes FROM global_holes",
         )
         global_holes_dug = cursor.fetchone()
-        global_holes_dug = global_holes_dug[0]
+        global_holes_dug = global_holes_dug[0] if global_holes_dug else 0
 
     for x in task_reloading:
         if x["recurrence"] == "every_day":
@@ -1301,36 +1348,28 @@ def home_page():
             connection.commit()
             connection.close()
         elif x["recurrence"] == "every_month":
-            if x["every_month_day"] == day_of_month:
+            try:
+                monthly_day = int(x["every_month_day"])
+            except (TypeError, ValueError):
+                continue
+
+            if monthly_day == day_of_month or (
+                monthly_day > days_in_month
+                and day_of_month == days_in_month
+            ):
                 connection = sqlite3.connect(
                     os.path.join(currentdirectory, "tasks_today.db")
                 )
                 cursor = connection.cursor()
                 cursor.execute(
-                    "INSERT INTO tasks_today VALUES (?, ?, ?, ?)",
+                    """
+                    INSERT INTO tasks_today (username, task, skill, day_of_month_added)
+                    VALUES (?, ?, ?, ?)
+                    """,
                     (user["username"], x["task"], x["skill"], day_of_month)
                 )
                 connection.commit()
                 connection.close()
-            elif (
-                x["every_month_day"] is not None
-                and x["every_month_day"] > 28
-                and day_of_month == days_in_month
-                and day_of_month < x["every_month_day"]
-            ):
-                    connection = sqlite3.connect(
-                        os.path.join(currentdirectory, "tasks_today.db")
-                    )
-                    cursor = connection.cursor()
-                    cursor.execute(
-                        """
-                        INSERT INTO tasks_today (username, task, skill, day_of_month)
-                        VALUES (?, ?, ?, ?)
-                        """,
-                        (user["username"], x["task"], x["skill"], day_of_month)
-                    )
-                    connection.commit()
-                    connection.close()
 
     # This query must be OUTSIDE the loop.
     with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection_tasks_today:
@@ -1353,7 +1392,7 @@ def home_page():
                 AND day_of_month_completed = ?
             )
             """,
-            (user["username"], user["username"], day_of_month)
+            (user["username"], user["username"], current_date)
         ).fetchall()
 
     return render_template(
@@ -1371,7 +1410,18 @@ def add_task():
     if not user:
         return redirect("/")
 
-    day_of_month = datetime.now().date().isoformat()
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        result = connection.execute(
+            "SELECT timezone FROM user_settings WHERE username = ?",
+            (user["username"],)
+        ).fetchone()
+
+    timezone = result[0] if result and result[0] else "UTC"
+    current_time = datetime.now(ZoneInfo(timezone))
+
+    current_day = current_time.strftime("%A").lower()
+    day_of_month = current_time.day
+    current_date = current_time.date().isoformat()
 
     task_input = request.form.get("task_input", "").strip()
     selected_skill = request.form.get("skills_radio")
@@ -1400,7 +1450,7 @@ def add_task():
                 "ATTACH DATABASE ? AS completed_db",
                 (os.path.join(currentdirectory, "tasks_completed_today.db"),)
             )
-            day_of_month = datetime.now().date().isoformat()
+            
 
             current_tasks = connection.execute(
                 """
@@ -1414,7 +1464,7 @@ def add_task():
                     AND day_of_month_completed = ?
                 )
                 """,
-                (user["username"], user["username"], day_of_month)
+                (user["username"], user["username"], current_date)
             ).fetchall()
 
         return render_template(
@@ -1511,7 +1561,18 @@ def complete_task():
     if not user:
         return redirect("/")
     
-    day_of_month = datetime.now().date().isoformat()
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        result = connection.execute(
+            "SELECT timezone FROM user_settings WHERE username = ?",
+            (user["username"],)
+        ).fetchone()
+
+    timezone = result[0] if result and result[0] else "UTC"
+    current_time = datetime.now(ZoneInfo(timezone))
+
+    current_day = current_time.strftime("%A").lower()
+    day_of_month = current_time.day
+    current_date = current_time.date().isoformat()
 
     selected_skill_completed = request.form.get("selected_skill_completed")
     selected_task_completed = request.form.get("selected_task_completed")
@@ -1522,14 +1583,14 @@ def complete_task():
         cursor = connection.cursor()
         cursor.execute(
             "DELETE  FROM tasks_completed_today WHERE username = ? AND day_of_month_completed != ?",
-            (user["username"], day_of_month)
+            (user["username"], current_date)
         )
     
     with sqlite3.connect(os.path.join(currentdirectory, "tasks_completed_today.db")) as connection:
         cursor = connection.cursor()
         cursor.execute(
             "INSERT INTO tasks_completed_today VALUES(?, ?, ?, ?)",
-            (user["username"], selected_task_completed, selected_skill_completed, day_of_month)
+            (user["username"], selected_task_completed, selected_skill_completed, current_date)
         )
     with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection:
         cursor = connection.cursor()
@@ -1622,7 +1683,7 @@ def add_achievement():
     if not user:
         return redirect("/")
     
-    achievement_input = request.form.get("achievement_input")
+    achievement_input = request.form.get("achievement_input", "").strip()
 
     if not achievement_input:
         return redirect("/load_add_achievements")
@@ -1634,7 +1695,7 @@ def add_achievement():
             (user["username"],)
         )
 
-        achievements = cursor.fetchone()
+        achievements = cursor.fetchall()
     if len(achievements) >= 30:
         error_message = "Over 30 achievements! Please remove an achievement to add this achievement."
         
@@ -1648,32 +1709,35 @@ def add_achievement():
         return render_template(
             "add_achievements.html",
             user=user,
-            current_achievements=current_achievements,
+            achievements=current_achievements,
             error_message=error_message
         )
-    with sqlite3.connect(os.path.join(currentdirectory, "tasks_reloader.db")) as connection:
-        cursor = connection.cursor()
-        cursor.execute(
-            "SELECT achievement FROM achievements WHERE username = ?",
-            (user["username"],)
-        )
-        achievements = cursor.fetchone()
+    cursor.execute(
+        "SELECT achievement FROM achievements WHERE username = ?",
+        (user["username"],)
+    )
+
+    achievements = cursor.fetchall()
 
     for x in achievements:
-        if x[0].strip().lower() == achievement_input.lower():
+        if x[0].strip().lower() == achievement_input.strip().lower():
             error_message = "Achievement has already been created!"
 
-            # Load the achievements again for add_achievements.html
             with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
                 current_achievements = connection.execute(
                     "SELECT achievement FROM achievements WHERE username = ?",
                     (user["username"],)
-                ).fetchall() 
-            current_achievements = [current_achievement[0] for current_achievement in current_achievements]
+                ).fetchall()
+
+            current_achievements = [
+                current_achievement[0]
+                for current_achievement in current_achievements
+            ]
+
             return render_template(
                 "add_achievements.html",
                 user=user,
-                current_achievements=current_achievements,
+                achievements=current_achievements,
                 error_message=error_message
             )
     with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
@@ -1703,7 +1767,7 @@ def remove_achievement():
             (user["username"], selected_achievement_deleted)
         )
     
-    return redirect("/home_page")
+    return redirect("/load_add_achievements")
 
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":

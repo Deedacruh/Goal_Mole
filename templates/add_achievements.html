@@ -1,26 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %}Goal Mole: Home Page{% endblock %}
+{% block title %}Goal Mole: Achievements Page{% endblock %}
 
 {% block content %}
 
 <div class="achievements_page">
-<!-- Task creation -->
+
     <main class="achievement-main">
 
+        <!-- Achievement creation -->
         <section class="achievement-card">
 
             <div class="achievement-heading">
                 <span class="achievement-icon">✦</span>
-                <div>
+
+                <div class="achievement-heading-text">
                     <h2>Add an achievement</h2>
-                    <p>Tell us about how you have helped and improved others and your own life!</p>
+                    <p>Show off the ways you've grown, helped others, and made a difference.</p>
                 </div>
             </div>
 
-            <!-- Main task form -->
-            <form id="add_achievement_form" action="/add_achievement" method="POST"
-                    class="add-achievement-form">
+            <!-- Main achievement form -->
+            <form
+                id="add_achievement_form"
+                action="/add_achievement"
+                method="POST"
+                class="add-achievement-form"
+            >
 
                 <label for="achievement_input">Personal achievement</label>
 
@@ -28,50 +34,65 @@
                     id="achievement_input"
                     type="text"
                     name="achievement_input"
-                    placeholder="What do you want to accomplish?"
+                    placeholder="What are you proud of?"
+                    maxlength="300"
                     required
                 >
 
                 <button type="submit" class="add_task_button">
-                    <span>＋</span> Add achievement
+                    <span aria-hidden="true">＋</span>
+                    Add achievement
                 </button>
+
             </form>
+
         </section>
+
+        <!-- Existing achievements -->
         <section class="tasks-section">
 
             <div class="tasks-section-heading">
                 <div>
-                    <h2>Your achievements</h2>
-                    <p>
-                        Limit: 30 achievements. 
-                    </p>
+                    <h2>Your achievements <span class="heading-sparkle">✧</span></h2>
+                    <p>Every step forward counts. Up to 30 achievements.</p>
                 </div>
+
+                <span class="achievement-count">
+                    {{ achievements|length }} / 30
+                </span>
             </div>
 
-            <div class="tasks_today" id="task_row">
+            <div class="tasks_today" id="achievement_rows">
+
                 {% for achievement in achievements %}
 
                     <article class="task-person-card">
 
+                        <div class="achievement-list-icon" aria-hidden="true">✦</div>
+
                         <div class="task-person-info">
-                            <h3 class="task-card-task">
-                                {{ achievement["achievement"] }}
-                            </h3>
+                            <h3 class="task-card-task">{{ achievement }}</h3>
                         </div>
 
                         <div class="task-card-actions">
 
                             <form action="/remove_achievement" method="POST">
-            
+
                                 <input
                                     type="hidden"
                                     name="selected_achievement_deleted"
-                                    value="{{ achievement['achievement'] }}"
+                                    value="{{ achievement }}"
                                 >
 
-                                <button type="submit" class="task-remove-button">
-                                    ✕ Remove
+                                <button
+                                    type="submit"
+                                    class="achievement-remove-button"
+                                    aria-label="Remove achievement: {{ achievement }}"
+                                >
+                                    <span aria-hidden="true">×</span>
+                                    <span>Remove</span>
                                 </button>
+
                             </form>
 
                         </div>
@@ -81,14 +102,597 @@
                 {% else %}
 
                     <div class="tasks-empty-state">
-                        <h3>No achievements yet</h3>
-                        <p>Add an achievement above to get started.</p>
+                        <div class="empty-state-icon" aria-hidden="true">✧</div>
+                        <h3>Your story starts here</h3>
+                        <p>Add your first personal achievement above. Big or small, every accomplishment matters.</p>
                     </div>
 
                 {% endfor %}
+
             </div>
 
         </section>
+
     </main>
+
 </div>
+
+<style>
+/* =========================================
+   ACHIEVEMENTS PAGE
+   Responsive, translucent galaxy styling
+   ========================================= */
+
+.achievements_page {
+    --achievement-purple: #a78bfa;
+    --achievement-purple-bright: #c4b5fd;
+    --achievement-purple-deep: #7c3aed;
+    --achievement-border: rgba(167, 139, 250, 0.28);
+    --achievement-card-bg: rgba(35, 25, 58, 0.38);
+    --achievement-hover-bg: rgba(139, 92, 246, 0.12);
+
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: clamp(16px, 2.5vw, 36px);
+    color: inherit;
+    position: relative;
+}
+
+/* Main content keeps your original placement */
+.achievement-main {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(22px, 3vh, 36px);
+    box-sizing: border-box;
+}
+
+/* =========================================
+   TOP ACHIEVEMENT FORM CARD
+   ========================================= */
+
+.achievement-card {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: clamp(18px, 3vw, 34px);
+    border: 1px solid var(--achievement-border);
+    border-radius: clamp(14px, 1.5vw, 22px);
+
+    background:
+        radial-gradient(
+            ellipse at 0% 0%,
+            rgba(139, 92, 246, 0.17),
+            transparent 58%
+        ),
+        var(--achievement-card-bg);
+
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+
+    box-shadow:
+        0 10px 35px rgba(18, 10, 35, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+    position: relative;
+    overflow: hidden;
+}
+
+/* Small decorative galaxy glow */
+.achievement-card::after {
+    content: "✦   ·       ✧";
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    color: var(--achievement-purple-bright);
+    opacity: 0.38;
+    font-size: clamp(12px, 1.5vw, 18px);
+    letter-spacing: 0.7rem;
+    pointer-events: none;
+}
+
+.achievement-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(12px, 1.5vw, 20px);
+    margin-bottom: clamp(20px, 3vh, 30px);
+    min-width: 0;
+}
+
+.achievement-icon {
+    flex-shrink: 0;
+    width: clamp(42px, 5vw, 58px);
+    height: clamp(42px, 5vw, 58px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(196, 181, 253, 0.35);
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(167, 139, 250, 0.28),
+            rgba(91, 33, 182, 0.16)
+        );
+
+    color: var(--achievement-purple-bright);
+    font-size: clamp(24px, 3vw, 34px);
+    box-shadow: 0 0 22px rgba(139, 92, 246, 0.12);
+}
+
+.achievement-heading-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.achievement-heading h2,
+.tasks-section-heading h2 {
+    margin: 0;
+    font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    letter-spacing: -0.025em;
+}
+
+.achievement-heading p,
+.tasks-section-heading p {
+    margin: 7px 0 0;
+    font-size: clamp(0.88rem, 1.2vw, 1rem);
+    line-height: 1.65;
+    opacity: 0.78;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================
+   ADD ACHIEVEMENT FORM
+   ========================================= */
+
+.add-achievement-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 11px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.add-achievement-form label {
+    font-size: 0.94rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+.add-achievement-form input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    padding: 14px 16px;
+    border-radius: 11px;
+    border: 1px solid var(--achievement-border);
+
+    /* Translucent so the selected wallpaper can still show through */
+    background: rgba(20, 15, 35, 0.12);
+    color: inherit;
+
+    font: inherit;
+    font-size: 1rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.add-achievement-form input::placeholder {
+    color: inherit;
+    opacity: 0.52;
+}
+
+.add-achievement-form input:focus {
+    outline: none;
+    border-color: var(--achievement-purple);
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18);
+    background: rgba(139, 92, 246, 0.08);
+}
+
+/* Add button */
+.add-achievement-form .add_task_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    gap: 9px;
+
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-top: 5px;
+    padding: 12px 19px;
+
+    border: 1px solid rgba(196, 181, 253, 0.38);
+    border-radius: 11px;
+
+    background: linear-gradient(
+        135deg,
+        #8b5cf6,
+        #6d28d9
+    );
+
+    color: #ffffff;
+    font: inherit;
+    font-weight: 650;
+    cursor: pointer;
+
+    box-shadow: 0 5px 16px rgba(109, 40, 217, 0.2);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.add-achievement-form .add_task_button span {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.add-achievement-form .add_task_button:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 7px 22px rgba(139, 92, 246, 0.3);
+    transform: translateY(-1px);
+}
+
+.add-achievement-form .add_task_button:active {
+    transform: scale(0.98);
+}
+
+.add-achievement-form .add_task_button:focus-visible,
+.achievement-remove-button:focus-visible {
+    outline: 3px solid var(--achievement-purple-bright);
+    outline-offset: 3px;
+}
+
+/* =========================================
+   ACHIEVEMENTS LIST HEADING
+   ========================================= */
+
+.tasks-section {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.tasks-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.tasks-section-heading > div {
+    min-width: 0;
+}
+
+.heading-sparkle {
+    color: var(--achievement-purple);
+}
+
+.achievement-count {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    border: 1px solid var(--achievement-border);
+    border-radius: 999px;
+
+    background: rgba(139, 92, 246, 0.09);
+    color: inherit;
+
+    font-size: 0.83rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   INDIVIDUAL ACHIEVEMENT CARDS
+   ========================================= */
+
+#achievement_rows {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 1.5vh, 16px);
+
+    width: 100%;
+    min-width: 0;
+}
+
+#achievement_rows .task-person-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(12px, 1.5vw, 20px);
+
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: clamp(14px, 2vw, 22px);
+
+    border: 1px solid var(--achievement-border);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            110deg,
+            rgba(139, 92, 246, 0.09),
+            transparent 75%
+        ),
+        rgba(35, 25, 58, 0.24);
+
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+
+    box-shadow: 0 5px 18px rgba(18, 10, 35, 0.07);
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+#achievement_rows .task-person-card:hover {
+    border-color: rgba(167, 139, 250, 0.55);
+    background-color: var(--achievement-hover-bg);
+}
+
+.achievement-list-icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+
+    background: rgba(139, 92, 246, 0.12);
+    color: var(--achievement-purple);
+
+    font-size: 19px;
+}
+
+#achievement_rows .task-person-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#achievement_rows .task-card-task {
+    margin: 0;
+    font-size: clamp(0.96rem, 1.3vw, 1.08rem);
+    line-height: 1.6;
+    font-weight: 550;
+
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+/* Actions stay to the right on larger screens */
+#achievement_rows .task-card-actions {
+    flex: 0 0 auto;
+    max-width: 100%;
+}
+
+#achievement_rows .task-card-actions form {
+    margin: 0;
+}
+
+/* =========================================
+   REMOVE BUTTON
+   ========================================= */
+
+.achievement-remove-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: 9px 13px;
+
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: 9px;
+
+    background: rgba(220, 38, 38, 0.08);
+    color: #ef7777;
+
+    font: inherit;
+    font-size: 0.87rem;
+    font-weight: 600;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.achievement-remove-button > span:first-child {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.achievement-remove-button:hover {
+    background: rgba(220, 38, 38, 0.16);
+    border-color: rgba(248, 113, 113, 0.6);
+    color: #ff8c8c;
+}
+
+.achievement-remove-button:active {
+    transform: scale(0.97);
+}
+
+/* =========================================
+   EMPTY STATE
+   ========================================= */
+
+#achievement_rows .tasks-empty-state {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    padding: clamp(26px, 4vw, 48px) clamp(18px, 3vw, 32px);
+
+    text-align: center;
+    overflow-wrap: anywhere;
+
+    border: 1px dashed var(--achievement-border);
+    border-radius: 16px;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(139, 92, 246, 0.13),
+            transparent 70%
+        ),
+        rgba(35, 25, 58, 0.18);
+}
+
+.empty-state-icon {
+    margin-bottom: 10px;
+    color: var(--achievement-purple);
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+#achievement_rows .tasks-empty-state h3 {
+    margin: 0;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+}
+
+#achievement_rows .tasks-empty-state p {
+    max-width: 440px;
+    margin: 9px auto 0;
+    font-size: 0.94rem;
+    line-height: 1.7;
+    opacity: 0.75;
+}
+
+/* =========================================
+   RESPONSIVE LAYOUT
+   ========================================= */
+
+@media (max-width: 600px) {
+    .achievements_page {
+        padding: 16px 12px;
+    }
+
+    .achievement-main {
+        gap: 22px;
+    }
+
+    .achievement-card {
+        padding: 20px 16px;
+    }
+
+    .achievement-card::after {
+        right: 12px;
+        letter-spacing: 0.35rem;
+    }
+
+    .achievement-heading {
+        gap: 12px;
+    }
+
+    .tasks-section-heading {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .achievement-count {
+        padding: 6px 9px;
+        font-size: 0.76rem;
+    }
+
+    /* Stack achievement information and button */
+    #achievement_rows .task-person-card {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr);
+        align-items: start;
+        gap: 10px 12px;
+        padding: 15px;
+    }
+
+    #achievement_rows .achievement-list-icon {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    #achievement_rows .task-person-info {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    #achievement_rows .task-card-actions {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    #achievement_rows .task-card-actions form {
+        width: 100%;
+    }
+
+    .achievement-remove-button {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .add-achievement-form .add_task_button {
+        width: 100%;
+        align-self: stretch;
+    }
+}
+
+/* Extra-small screens */
+@media (max-width: 360px) {
+    .achievements_page {
+        padding: 12px 8px;
+    }
+
+    .achievement-card {
+        padding: 16px 12px;
+    }
+
+    .achievement-heading {
+        gap: 9px;
+    }
+
+    .achievement-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+    }
+
+    .tasks-section-heading {
+        flex-wrap: wrap;
+    }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .achievement-card *,
+    #achievement_rows *,
+    .add-achievement-form .add_task_button {
+        transition: none !important;
+    }
+}
+</style>
+
 {% endblock %}

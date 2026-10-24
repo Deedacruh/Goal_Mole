@@ -533,6 +533,20 @@
                     {% endfor %}
                 </div>
             </div>
+            <!-- ACHIEVEMENTS: RIGHT SIDE, ONE LINE PER ACHIEVEMENT. ALSO ACHIEVEMENTS SECTOR IS UNDER SKILLS -->
+            <div class="profile-widget profile-skills-widget">
+                <h2>Achievements</h2>
+
+                <div class="profile-achievements-list">
+                    {% for achievement in achievements %}
+                        <div class="skill-row">
+                            <h2 class="skill-name">{{ achievement["achievement"] }}</h2>
+                        </div>
+                    {% else %}
+                        <p class="empty-value">No achievements displayed yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
 
         </section>
     </main>
