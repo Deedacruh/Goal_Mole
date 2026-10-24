@@ -1497,7 +1497,7 @@ def add_task():
     cursor = connection.cursor()
     cursor.execute(
         "INSERT INTO tasks_reloader VALUES (?, ?, ?, ?, ?)",
-        (user["username"], task_input, selected_skill, selected_habit, day_of_month) # CURRENT DATE SHOWS +1 DAY TODO FIX
+        (user["username"], task_input, selected_skill, selected_habit, day_of_month)
     )
     connection.commit()
     connection.close()
@@ -1601,7 +1601,19 @@ def load_add_achievements():
     
     if not user:
         return redirect("/")
-    return render_template("add_achievements.html")
+
+    achievements = []
+    with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection_achievements:
+        connection_achievements.row_factory = sqlite3.Row
+        achievements_current = connection_achievements.execute(
+            "SELECT achievement FROM achievements WHERE username = ?",
+            (user["username"],)
+        ).fetchall()
+    for x in range(len(achievements_current)):
+        achievements.append(achievements_current[x][0])
+    
+    
+    return render_template("add_achievements.html", achievements=achievements)
 
 @app.route("/add_achievement", methods=["POST"])
 def add_achievement():
@@ -1609,20 +1621,90 @@ def add_achievement():
         
     if not user:
         return redirect("/")
-
     
     achievement_input = request.form.get("achievement_input")
 
     if not achievement_input:
-        return redirect("/settings")
+        return redirect("/load_add_achievements")
     
     with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO achievements VALUES (?, )",
+            "SELECT achievement FROM achievements WHERE username = ?",
+            (user["username"],)
+        )
+
+        achievements = cursor.fetchone()
+    if len(achievements) >= 30:
+        error_message = "Over 30 achievements! Please remove an achievement to add this achievement."
+        
+        # Load the achievements again for add_achievements.html
+        with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
+            current_achievements = connection.execute(
+                "SELECT achievement FROM achievements WHERE username = ?",
+                (user["username"],)
+            ).fetchall() 
+        current_achievements = [current_achievement[0] for current_achievement in current_achievements]
+        return render_template(
+            "add_achievements.html",
+            user=user,
+            current_achievements=current_achievements,
+            error_message=error_message
+        )
+    with sqlite3.connect(os.path.join(currentdirectory, "tasks_reloader.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT achievement FROM achievements WHERE username = ?",
+            (user["username"],)
+        )
+        achievements = cursor.fetchone()
+
+    for x in achievements:
+        if x[0].strip().lower() == achievement_input.lower():
+            error_message = "Achievement has already been created!"
+
+            # Load the achievements again for add_achievements.html
+            with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
+                current_achievements = connection.execute(
+                    "SELECT achievement FROM achievements WHERE username = ?",
+                    (user["username"],)
+                ).fetchall() 
+            current_achievements = [current_achievement[0] for current_achievement in current_achievements]
+            return render_template(
+                "add_achievements.html",
+                user=user,
+                current_achievements=current_achievements,
+                error_message=error_message
+            )
+    with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO achievements VALUES (?, ?)",
             (user["username"], achievement_input)
         )
+    return redirect("/load_add_achievements")
     
+@app.route("/remove_achievement", methods=["POST"])
+def remove_achievement():
+    user = session.get("user")
+            
+    if not user:
+        return redirect("/")
+
+    selected_achievement_deleted = request.form.get("selected_achievement_deleted")
+
+    if not selected_achievement_deleted:
+        return redirect("/load_add_achievements")
+
+    with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "DELETE FROM achievements WHERE username = ? AND achievement = ?",
+            (user["username"], selected_achievement_deleted)
+        )
+    
+    return redirect("/home_page")
+
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
