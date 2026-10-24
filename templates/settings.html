@@ -365,6 +365,45 @@
             Please be honest about your personal achievements. 
         </p>
     </section>
+    <!-- DELETE ACCOUNT -->
+    <section class="settings-section" id="delete-account-section">
+        <div class="section-heading">
+            <h2>Delete account</h2>
+            <p>
+                Permanently remove your Goal Mole account and associated data.
+            </p>
+        </div>
+
+        <form action="/DELETE_ACCOUNT" method="POST"
+            class="settings-form delete-account-form">
+
+            <label for="remove-account" class="field-label">
+                Confirmation
+                <input
+                    id="remove-account"
+                    type="text"
+                    name="input_remove_account"
+                    placeholder="Type REMOVE to permanently delete your account."
+                    autocomplete="off"
+                    required
+                >
+            </label>
+
+            <button type="submit" class="settings-button delete-account-button">
+                Delete Account
+            </button>
+        </form>
+
+        <p class="delete-account-warning">
+            WARNING: This action cannot be undone.
+        </p>
+
+        {% if error_message_remove %}
+            <p class="delete-account-error">
+                {{ error_message_remove }}
+            </p>
+        {% endif %}
+    </section>
 </div>
 
 
@@ -1241,6 +1280,181 @@
         border-color: rgba(210, 192, 238, 0.65);
         box-shadow: 0 8px 32px rgba(75, 42, 115, 0.07);
     }
+    
+/* =========================================
+   DELETE ACCOUNT — RESPONSIVE WARNING CARD
+   ========================================= */
+
+#delete-account-section {
+    border: 1px solid rgba(255, 85, 115, 0.4);
+    background: rgba(65, 17, 38, 0.48);
+
+    -webkit-backdrop-filter: blur(clamp(0.5rem, 1.5vw, 1rem));
+    backdrop-filter: blur(clamp(0.5rem, 1.5vw, 1rem));
+
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.12);
+}
+
+#delete-account-section .section-heading h2 {
+    color: #ff6b81;
+}
+
+#delete-account-section .section-heading p {
+    color: #e4b8c5;
+}
+
+/* FORM LAYOUT */
+
+#delete-account-section .delete-account-form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: clamp(0.6rem, 1.2vw, 1rem);
+    width: 100%;
+    min-width: 0;
+}
+
+#delete-account-section .delete-account-form .field-label {
+    flex: 1 1 18rem;
+    min-width: 0;
+}
+
+/* CONFIRMATION INPUT */
+
+#delete-account-section #remove-account {
+    width: 100%;
+    min-width: 0;
+    padding: clamp(0.65rem, 1.1vw, 1rem);
+
+    color: #fff0f3;
+    background: rgba(25, 10, 20, 0.75);
+    border: 1px solid rgba(255, 100, 127, 0.4);
+    border-radius: 0.65rem;
+
+    font: inherit;
+    font-size: clamp(0.85rem, 1vw, 1rem);
+}
+
+#delete-account-section #remove-account::placeholder {
+    color: #d5a0ae;
+    opacity: 1;
+}
+
+#delete-account-section #remove-account:focus {
+    outline: 2px solid #ff647f;
+    outline-offset: 0.2rem;
+    border-color: #ff647f;
+}
+
+/* DELETE BUTTON */
+
+#delete-account-section .delete-account-button {
+    flex: 0 1 auto;
+    max-width: 100%;
+
+    color: #ffffff;
+    background: linear-gradient(135deg, #e84965, #a71943);
+    border: 1px solid rgba(255, 170, 185, 0.5);
+
+    box-shadow: 0 0.3vw 1vw rgba(190, 25, 65, 0.2);
+    overflow-wrap: anywhere;
+}
+
+#delete-account-section .delete-account-button:hover {
+    background: linear-gradient(135deg, #ff647f, #c52250);
+    box-shadow: 0 0.5vw 1.5vw rgba(190, 25, 65, 0.3);
+}
+
+/* WARNING AND ERROR */
+
+#delete-account-section .delete-account-warning {
+    margin: clamp(0.8rem, 1.5vw, 1.25rem) 0 0;
+    color: #ff8a9b;
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    font-weight: 700;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+#delete-account-section .delete-account-error {
+    margin-top: 0.75rem;
+    color: #ff647f;
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    font-weight: 650;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================
+   LIGHT MODE
+   ========================================= */
+
+body.light-mode #delete-account-section {
+    background: rgba(255, 240, 244, 0.72);
+    border-color: rgba(190, 35, 70, 0.3);
+    box-shadow: 0 0.5vw 2vw rgba(100, 30, 50, 0.06);
+}
+
+body.light-mode #delete-account-section .section-heading h2 {
+    color: #a51e3c;
+}
+
+body.light-mode #delete-account-section .section-heading p {
+    color: #78606a;
+}
+
+body.light-mode #delete-account-section .delete-account-warning,
+body.light-mode #delete-account-section .delete-account-error {
+    color: #b42345;
+}
+
+body.light-mode #delete-account-section #remove-account {
+    color: #39202a;
+    background: rgba(255, 255, 255, 0.85);
+    border-color: #e7a7b6;
+}
+
+body.light-mode #delete-account-section #remove-account::placeholder {
+    color: #946574;
+}
+
+/* =========================================
+   CUSTOM WALLPAPER — FROSTED GLASS
+   ========================================= */
+
+body.custom #delete-account-section {
+    background: rgba(35, 15, 35, 0.55);
+    border-color: rgba(255, 120, 155, 0.4);
+
+    -webkit-backdrop-filter: blur(clamp(0.5rem, 1.5vw, 1rem));
+    backdrop-filter: blur(clamp(0.5rem, 1.5vw, 1rem));
+}
+
+body.custom #delete-account-section #remove-account {
+    background: rgba(15, 8, 20, 0.55);
+
+    -webkit-backdrop-filter: blur(0.5rem);
+    backdrop-filter: blur(0.5rem);
+}
+
+/* =========================================
+   SMALL SCREENS
+   ========================================= */
+
+@media (max-width: 42rem) {
+    #delete-account-section .delete-account-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #delete-account-section .delete-account-form .field-label,
+    #delete-account-section .delete-account-button {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
 </style>
 
 {% endblock %}

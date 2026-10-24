@@ -1797,6 +1797,179 @@ def remove_achievement():
     
     return redirect("/load_add_achievements")
 
+@app.route("/DELETE_ACCOUNT", methods=["POST"]) # All caps because VERY important to not mess up. 
+def DELETE_ACCOUNT():
+    user = session.get("user")
+
+    if not user:
+        return redirect("/")
+
+    input_remove_account = request.form.get("input_remove_account")
+    username = user["username"]
+
+    if not input_remove_account == "REMOVE":
+        error_message_remove = 'You must input "REMOVE" to remove your account.'
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            current_email_displayed = connection.execute(
+                """
+                    SELECT public_email
+                    FROM user_settings
+                    WHERE username = ?
+                """,
+                (user["username"],)
+            ).fetchone()
+        if current_email_displayed:
+            current_email_displayed = current_email_displayed[0]
+        else:
+            current_email_displayed = None
+
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            current_pronouns_displayed = connection.execute(
+                """
+                    SELECT pronouns
+                    FROM user_settings
+                    WHERE username = ?
+                """,
+                (user["username"],)
+            ).fetchone()
+        if current_pronouns_displayed:
+            current_pronouns_displayed = current_pronouns_displayed[0]
+        else:
+            current_pronouns_displayed = None
+        
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            current_bio_displayed = connection.execute(
+                """
+                    SELECT bio
+                    FROM user_settings
+                    WHERE username = ?
+                """,
+                (user["username"],)
+            ).fetchone()
+        if current_bio_displayed:
+            current_bio_displayed = current_bio_displayed[0]
+        else:
+            current_bio_displayed = None
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+                current_job_displayed = connection.execute(
+                    """
+                        SELECT job
+                        FROM user_settings
+                        WHERE username = ?
+                    """,
+                    (user["username"],)
+                ).fetchone()
+        if current_job_displayed:
+            current_job_displayed = current_job_displayed[0]
+        else:
+            current_job_displayed = None
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            current_location_displayed = connection.execute(
+                """
+                    SELECT location
+                    FROM user_settings
+                    WHERE username = ?
+                """,
+                (user["username"],)
+            ).fetchone()
+        if current_location_displayed:
+            current_location_displayed = current_location_displayed[0]
+        else:
+            current_location_displayed = None
+        current_skills_displayed_str = ""
+        with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+            current_skills_displayed = connection.execute(
+                """
+                    SELECT skill
+                    FROM skills
+                    WHERE username = ?
+                """,
+                (user["username"],)
+            ).fetchall()
+        if current_skills_displayed:
+            for x in range(len(current_skills_displayed)):
+                current_skills_displayed_str += current_skills_displayed[x][0] + "\n" #TODO Make each skill a new line
+
+        else:
+            current_skills_displayed_str = ""
+        return render_template(
+            "settings.html",
+            user=user,
+            current_email_displayed=current_email_displayed,
+            current_pronouns_displayed=current_pronouns_displayed,
+            current_bio_displayed=current_bio_displayed,
+            current_job_displayed=current_job_displayed,
+            current_location_displayed=current_location_displayed,
+            current_skills_displayed_str=current_skills_displayed_str,
+            error_message_remove=error_message_remove
+        )
+    else:
+        # Delete the user's profile
+        with sqlite3.connect(os.path.join(currentdirectory, "profile.db")) as connection:
+            connection.execute(
+                "DELETE FROM profile WHERE username = ?",
+                (username,)
+            )
+
+        # Delete the user's settings
+        with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+            connection.execute(
+                "DELETE FROM user_settings WHERE username = ?",
+                (username,)
+            )
+
+        # Delete friend requests sent or received by the user
+        with sqlite3.connect(os.path.join(currentdirectory, "requests.db")) as connection:
+            connection.execute(
+                "DELETE FROM requests WHERE sender = ? OR receiver = ?",
+                (username, username)
+            )
+
+        # Delete friendships involving the user
+        with sqlite3.connect(os.path.join(currentdirectory, "friends.db")) as connection:
+            connection.execute(
+                "DELETE FROM friends WHERE username = ? OR receiver = ?",
+                (username, username)
+            )
+
+        # Delete user based holes involving the user
+        with sqlite3.connect(os.path.join(currentdirectory, "user_holes.db")) as connection:
+            connection.execute(
+                "DELETE FROM user_holes WHERE username = ?",
+                (username,)
+            )
+        # Delete skills involving the user
+        with sqlite3.connect(os.path.join(currentdirectory, "skills.db")) as connection:
+            connection.execute(
+                "DELETE FROM skills WHERE username = ?",
+                (username,)
+            )
+        # Delete tasks_completed_today involving the user
+        with sqlite3.connect(os.path.join(currentdirectory, "tasks_completed_today.db")) as connection:
+            connection.execute(
+                "DELETE FROM tasks_completed_today WHERE username = ?",
+                (username,)
+            )
+        # Delete tasks_reloader involving the user
+        with sqlite3.connect(os.path.join(currentdirectory, "tasks_reloader.db")) as connection:
+            connection.execute(
+                "DELETE FROM tasks_reloader WHERE username = ?",
+                (username,)
+            )
+        # Delete tasks_today involving the user
+        with sqlite3.connect(os.path.join(currentdirectory, "tasks_today.db")) as connection:
+            connection.execute(
+                "DELETE FROM tasks_today WHERE username = ?",
+                (username,)
+            )
+        # Delete achievements involving the user
+        with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
+            connection.execute(
+                "DELETE FROM achievements WHERE username = ?",
+                (username,)
+            )
+        session.clear()
+        return redirect("/")
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
@@ -1809,8 +1982,6 @@ if __name__ == "__main__":
 # DONE Add profile on friend list
 # DONE Add unfriend option.
 # DONE On profile page add the skills ranked by holes dug for each one on the side segment. 
-# TODO profile: friends below the about with only profile pictures and names
-# TODO Add a fun little side not below all of this like the bio but shorter below daily activity.
 # DONE Daily activities are the history of the activities done in that day laid out like people search
 # DONE Holes dug overall on the profile
 # DONE Add the task adder on homepage. HARDEST SEGMENT PROBABLY. 
