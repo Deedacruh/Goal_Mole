@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Goal Mole: Home Page{% endblock %}
+
+{% block content %}
+
+<div class="achievements_page">
+<!-- Task creation -->
+    <main class="achievement-main">
+
+        <section class="achievement-card">
+
+            <div class="achievement-heading">
+                <span class="achievement-icon">✦</span>
+                <div>
+                    <h2>Add an achievement</h2>
+                    <p>Tell us about how you have helped and improved others and your own life!</p>
+                </div>
+            </div>
+
+            <!-- Main task form -->
+            <form id="add_achievement_form" action="/add_achievement" method="POST"
+                    class="add-achievement-form">
+
+                <label for="achievement_input">Personal achievement</label>
+
+                <input
+                    id="achievement_input"
+                    type="text"
+                    name="achievement_input"
+                    placeholder="What do you want to accomplish?"
+                    required
+                >
+
+                <button type="submit" class="add_task_button">
+                    <span>＋</span> Add achievement
+                </button>
+            </form>
+        </section>
+        <section class="tasks-section">
+
+            <div class="tasks-section-heading">
+                <div>
+                    <h2>Your achievements</h2>
+                    <p>
+                        Limit: 30 achievements. 
+                    </p>
+                </div>
+            </div>
+
+            <div class="tasks_today" id="task_row">
+                {% for current_achievement in current_achievements %}
+
+                    <article class="task-person-card">
+
+                        <div class="task-person-info">
+                            <h3 class="task-card-task">
+                                {{ current_achievement["achievement"] }}
+                            </h3>
+                        </div>
+
+                        <div class="task-card-actions">
+
+                            <form action="/remove_achievement" method="POST">
+            
+                                <input
+                                    type="hidden"
+                                    name="selected_achievement_deleted"
+                                    value="{{ current_achievement['achievement'] }}"
+                                >
+
+                                <button type="submit" class="task-remove-button">
+                                    ✕ Remove
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                {% else %}
+
+                    <div class="tasks-empty-state">
+                        <h3>No achievements yet</h3>
+                        <p>Add an achievement above to get started.</p>
+                    </div>
+
+                {% endfor %}
+            </div>
+
+        </section>
+    </main>
+</div>
+{% endblock %}

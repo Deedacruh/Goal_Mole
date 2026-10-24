@@ -1595,6 +1595,34 @@ def delete_task():
 
     return redirect("/home_page")
 
+@app.route("/load_add_achievements", methods=["GET"])
+def load_add_achievements():
+    user = session.get("user")
+    
+    if not user:
+        return redirect("/")
+    return render_template("add_achievements.html")
+
+@app.route("/add_achievement", methods=["POST"])
+def add_achievement():
+    user = session.get("user")
+        
+    if not user:
+        return redirect("/")
+
+    
+    achievement_input = request.form.get("achievement_input")
+
+    if not achievement_input:
+        return redirect("/settings")
+    
+    with sqlite3.connect(os.path.join(currentdirectory, "achievements.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO achievements VALUES (?, )",
+            (user["username"], achievement_input)
+        )
+    
 # Keep this at the bottom. This is what starts the server.
 if __name__ == "__main__":
     app.run(debug=True)
