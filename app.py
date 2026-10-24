@@ -1268,7 +1268,13 @@ def home_page():
             (user["username"],)
         ).fetchall()
 
-
+    with sqlite3.connect(os.path.join(currentdirectory, "global_holes.db")) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT total_global_holes FROM global_holes",
+        )
+        global_holes_dug = cursor.fetchone()
+        global_holes_dug = global_holes_dug[0]
 
     for x in task_reloading:
         if x["recurrence"] == "every_day":
@@ -1354,7 +1360,8 @@ def home_page():
         "home_page.html",
         user=user,
         current_skills=current_skills,
-        current_tasks=current_tasks
+        current_tasks=current_tasks,
+        global_holes_dug=global_holes_dug
     )
         
 @app.route("/add_task", methods=["POST"])
@@ -1598,10 +1605,10 @@ if __name__ == "__main__":
 #DONE add bio and stuff
 #DONE add individual profiles
 # DONE Add profile on friend list
-# TODO Add unfriend option.
-# TODO On profile page add the skills ranked by holes dug for each one on the side segment. 
+# DONE Add unfriend option.
+# DONE On profile page add the skills ranked by holes dug for each one on the side segment. 
 # TODO profile: friends below the about with only profile pictures and names
 # TODO Add a fun little side not below all of this like the bio but shorter below daily activity.
-# TODO Daily activities are the history of the activities done in that day laid out like people search
-# TODO Holes dug today and overall on the profile
+# DONE Daily activities are the history of the activities done in that day laid out like people search
+# DONE Holes dug overall on the profile
 # DONE Add the task adder on homepage. HARDEST SEGMENT PROBABLY. 

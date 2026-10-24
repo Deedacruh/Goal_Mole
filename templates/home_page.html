@@ -7,6 +7,15 @@
 
 <div class="homepage">
 
+    <!-- Global holes dug -->
+     <div class="homepage-hole-area">
+
+        <h1 id="home_page_holes_dug_count">{{  global_holes_dug  }}</h1>
+        <h2 id="home_page_holes_dug">
+            holes have been dug on this website!
+        </h2>
+
+    </div>
     <!-- User profile area -->
     <div class="homepage-user-area">
 
@@ -1256,6 +1265,125 @@ body.light .tasks-section {
 body.light .homepage-error {
     background: rgba(255, 235, 238, 0.95);
     color: #8c1830;
+}
+
+/* Global holes dug statistics card */
+.homepage-hole-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    /* Flexible sizing and positioning */
+    width: clamp(15rem, 45vw, 38rem);
+    max-width: 100%;
+    min-height: clamp(9rem, 20vh, 16rem);
+    box-sizing: border-box;
+    padding: clamp(1rem, 3vw, 2.5rem);
+    margin: clamp(1rem, 3vh, 2rem) auto;
+    box-sizing: border-box;
+    padding: clamp(1rem, 3vw, 2.5rem);
+
+    /* Dark galaxy theme */
+    color: #f5f0ff;
+    background:
+        radial-gradient(
+            ellipse at top,
+            rgba(139, 92, 246, 0.22),
+            transparent 70%
+        ),
+        rgba(24, 20, 42, 0.88);
+
+    border: 1px solid rgba(167, 139, 250, 0.4);
+    border-radius: clamp(1rem, 2vw, 1.75rem);
+
+    box-shadow:
+        0 0.5rem 2rem rgba(0, 0, 0, 0.2),
+        0 0 1.5rem rgba(139, 92, 246, 0.12);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Large global count */
+#home_page_holes_dug_count {
+    margin: 0;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    overflow-wrap: anywhere;
+
+    color: #c4b5fd;
+    text-shadow: 0 0 1.25rem rgba(167, 139, 250, 0.35);
+}
+
+/* Description below the count */
+#home_page_holes_dug {
+    max-width: 32ch;
+    margin: 0.8rem 0 0;
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+    font-weight: 500;
+    line-height: 1.5;
+    color: #ddd6fe;
+}
+
+/* Light theme */
+body.light .homepage-hole-area {
+    color: #31204f;
+    background:
+        radial-gradient(
+            ellipse at top,
+            rgba(167, 139, 250, 0.2),
+            transparent 75%
+        ),
+        rgba(255, 255, 255, 0.88);
+
+    border-color: rgba(124, 58, 237, 0.25);
+
+    box-shadow:
+        0 0.5rem 2rem rgba(76, 29, 149, 0.08),
+        0 0 1.5rem rgba(124, 58, 237, 0.08);
+}
+
+body.light #home_page_holes_dug_count {
+    color: #6d28d9;
+    text-shadow: none;
+}
+
+body.light #home_page_holes_dug {
+    color: #5b467b;
+}
+
+/* Smaller screens */
+@media (max-width: 600px) {
+    .homepage-hole-area {
+        width: 100%;
+        min-height: 8rem;
+        padding: 1.25rem;
+        border-radius: 1rem;
+    }
+
+    #home_page_holes_dug_count {
+        font-size: clamp(2.5rem, 12vw, 4rem);
+    }
+
+    #home_page_holes_dug {
+        margin-top: 0.5rem;
+    }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .homepage-hole-area {
+        transition: none;
+    }
 }
 </style>
 
