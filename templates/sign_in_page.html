@@ -33,9 +33,11 @@
 /* =========================================
    GOAL MOLE — GALAXY SIGN-IN EXPERIENCE
    Deep space • Nebula purple • Cosmic glow
+   Responsive desktop + mobile
 ========================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap');
+
 
 /* ---------- GLOBAL RESET ---------- */
 
@@ -49,8 +51,9 @@ html {
 
 body.sign-in-block {
     min-height: 100vh;
+    width: 100%;
     margin: 0;
-    padding: 40px 20px;
+    padding: 4vh 3vw;
 
     display: flex;
     flex-direction: column;
@@ -91,6 +94,7 @@ body.sign-in-block {
     background-attachment: fixed;
 }
 
+
 /* ---------- COSMIC STAR FIELD ---------- */
 
 body.sign-in-block::before {
@@ -123,13 +127,16 @@ body.sign-in-block::before {
     animation: star-drift 60s linear infinite;
 }
 
+
 /* ---------- NEBULA LIGHT ---------- */
 
 body.sign-in-block::after {
     content: "";
     position: fixed;
-    width: 500px;
-    height: 500px;
+
+    width: min(50vw, 500px);
+    height: min(50vw, 500px);
+
     top: 50%;
     left: 50%;
     z-index: -1;
@@ -149,18 +156,19 @@ body.sign-in-block::after {
     animation: nebula-pulse 8s ease-in-out infinite alternate;
 }
 
+
 /* ---------- PAGE TITLE ---------- */
 
 .sign-in-block header {
     position: relative;
     z-index: 1;
 
-    margin-bottom: 32px;
+    margin-bottom: 3vh;
 
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(25px, 4vw, 38px);
+    font-size: clamp(24px, 2.4vw, 38px);
     font-weight: 800;
-    letter-spacing: 2px;
+    letter-spacing: 0.12vw;
     text-align: center;
 
     color: #ffffff;
@@ -182,17 +190,21 @@ body.sign-in-block::after {
     animation: title-appear 1s ease both;
 }
 
+
 /* ---------- GLASS SIGN-IN CARD ---------- */
 
 .sign-in-block form {
-    width: min(100%, 420px);
-    padding: 38px 34px;
+    width: 32vw;
+    max-width: 440px;
+    min-width: 290px;
+
+    padding: 3.5vh 2.5vw;
 
     position: relative;
     z-index: 1;
 
     border: 1px solid rgba(184, 151, 255, 0.23);
-    border-radius: 24px;
+    border-radius: clamp(16px, 1.5vw, 24px);
 
     background: linear-gradient(
         145deg,
@@ -202,14 +214,15 @@ body.sign-in-block::after {
 
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.025) inset,
-        0 20px 70px rgba(0, 0, 0, 0.48),
-        0 0 45px rgba(112, 57, 201, 0.12),
-        0 0 100px rgba(82, 45, 170, 0.08);
+        0 2vh 4vw rgba(0, 0, 0, 0.48),
+        0 0 3vw rgba(112, 57, 201, 0.12),
+        0 0 7vw rgba(82, 45, 170, 0.08);
 
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
 
     animation: card-appear 0.8s ease both;
+
     transition:
         border-color 0.3s ease,
         box-shadow 0.3s ease,
@@ -221,18 +234,19 @@ body.sign-in-block::after {
 
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.035) inset,
-        0 25px 80px rgba(0, 0, 0, 0.50),
-        0 0 55px rgba(112, 57, 201, 0.19);
+        0 2.5vh 5vw rgba(0, 0, 0, 0.50),
+        0 0 4vw rgba(112, 57, 201, 0.19);
 }
+
 
 /* ---------- ERROR / STATUS MESSAGE ---------- */
 
 #sign_in_message {
-    margin: 0 0 22px;
+    margin: 0 0 2.5vh;
     padding: 0;
 
     color: #ff9bb5;
-    font-size: 13px;
+    font-size: clamp(12px, 0.85vw, 14px);
     font-weight: 500;
     line-height: 1.6;
     overflow-wrap: anywhere;
@@ -240,36 +254,42 @@ body.sign-in-block::after {
     text-shadow: 0 0 12px rgba(255, 83, 139, 0.15);
 }
 
+
 /* ---------- FIELD LABELS ---------- */
 
 .sign-in-block form label {
     display: inline-block;
-    margin: 10px 0 9px;
+    margin: 1vh 0 0.9vh;
 
     color: #d9ccef;
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     font-weight: 600;
     letter-spacing: 0.5px;
 }
+
 
 /* ---------- INPUT FIELDS ---------- */
 
 .sign-in-block form input {
     display: block;
+
     width: 100%;
-    height: 49px;
-    padding: 0 15px;
-    margin: 0 0 15px;
+    height: 5.5vh;
+    min-height: 40px;
+    max-height: 54px;
+
+    padding: 0 1vw;
+    margin: 0 0 1.5vh;
 
     border: 1px solid rgba(179, 153, 226, 0.20);
-    border-radius: 12px;
+    border-radius: clamp(9px, 0.8vw, 12px);
     outline: none;
 
     color: #f8f5ff;
     background: rgba(7, 6, 18, 0.65);
 
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: clamp(12px, 0.9vw, 14px);
 
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12) inset;
 
@@ -301,7 +321,8 @@ body.sign-in-block::after {
     transform: translateY(-1px);
 }
 
-/* Keep the browser's saved-password/autofill text readable. */
+
+/* ---------- BROWSER AUTOFILL ---------- */
 
 .sign-in-block form input:-webkit-autofill,
 .sign-in-block form input:-webkit-autofill:hover,
@@ -312,6 +333,7 @@ body.sign-in-block::after {
     caret-color: #ffffff;
 }
 
+
 /* ---------- GALAXY SIGN-IN BUTTON ---------- */
 
 #sign_in_button {
@@ -320,15 +342,20 @@ body.sign-in-block::after {
     overflow: hidden;
 
     display: block;
+
     width: 100%;
-    min-height: 50px;
-    margin-top: 18px;
-    padding: 13px 18px;
+    height: 5.5vh;
+    min-height: 44px;
+    max-height: 56px;
+
+    margin-top: 1.5vh;
+    padding: 1vh 1vw;
 
     border: 1px solid rgba(224, 205, 255, 0.35);
-    border-radius: 12px;
+    border-radius: clamp(9px, 0.8vw, 12px);
 
     color: #ffffff;
+
     background: linear-gradient(
         110deg,
         #7040cf 0%,
@@ -338,7 +365,7 @@ body.sign-in-block::after {
     );
 
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: clamp(12px, 0.9vw, 14px);
     font-weight: 700;
     letter-spacing: 0.6px;
 
@@ -355,11 +382,13 @@ body.sign-in-block::after {
         filter 0.25s ease;
 }
 
-/* Light sweeps across the button on hover. */
+
+/* ---------- BUTTON LIGHT SWEEP ---------- */
 
 #sign_in_button::before {
     content: "";
     position: absolute;
+
     top: 0;
     left: -120%;
     z-index: -1;
@@ -380,7 +409,6 @@ body.sign-in-block::after {
 
 #sign_in_button:hover {
     transform: translateY(-3px);
-
     filter: brightness(1.12);
 
     box-shadow:
@@ -402,16 +430,17 @@ body.sign-in-block::after {
     outline-offset: 4px;
 }
 
+
 /* ---------- SIGN-UP SECTION ---------- */
 
 #sign-up-page-reference {
     position: relative;
     z-index: 1;
 
-    margin: 24px 0 0;
+    margin-top: 2.5vh;
     padding: 0;
 
-    font-size: 13px;
+    font-size: clamp(11px, 0.9vw, 14px);
     font-weight: 400;
     text-align: center;
 
@@ -440,6 +469,7 @@ body.sign-in-block::after {
 #sign-up-page-reference a::after {
     content: "";
     position: absolute;
+
     left: 0;
     bottom: -3px;
 
@@ -455,6 +485,7 @@ body.sign-in-block::after {
 
     transform: scaleX(0);
     transform-origin: center;
+
     transition: transform 0.25s ease;
 }
 
@@ -467,7 +498,8 @@ body.sign-in-block::after {
     transform: scaleX(1);
 }
 
-/* ---------- ANIMATIONS ---------- */
+
+/* ---------- STAR ANIMATION ---------- */
 
 @keyframes star-drift {
     from {
@@ -495,6 +527,9 @@ body.sign-in-block::after {
     }
 }
 
+
+/* ---------- NEBULA ANIMATION ---------- */
+
 @keyframes nebula-pulse {
     from {
         opacity: 0.55;
@@ -506,6 +541,9 @@ body.sign-in-block::after {
         scale: 1.12;
     }
 }
+
+
+/* ---------- TITLE ANIMATION ---------- */
 
 @keyframes title-appear {
     from {
@@ -519,6 +557,9 @@ body.sign-in-block::after {
     }
 }
 
+
+/* ---------- CARD ANIMATION ---------- */
+
 @keyframes card-appear {
     from {
         opacity: 0;
@@ -531,6 +572,33 @@ body.sign-in-block::after {
     }
 }
 
+
+/* ---------- TABLETS ---------- */
+
+@media (min-width: 481px) and (max-width: 800px) {
+    .sign-in-block form {
+        width: 55vw;
+        max-width: 440px;
+        min-width: 0;
+
+        padding: 3.5vh 4vw;
+    }
+
+    .sign-in-block header {
+        font-size: clamp(24px, 3.5vw, 34px);
+        letter-spacing: 1px;
+    }
+
+    .sign-in-block form input {
+        padding: 0 2vw;
+    }
+
+    #sign_in_button {
+        padding: 1vh 2vw;
+    }
+}
+
+
 /* ---------- MOBILE RESPONSIVENESS ---------- */
 
 @media (max-width: 480px) {
@@ -540,18 +608,81 @@ body.sign-in-block::after {
 
     .sign-in-block header {
         margin-bottom: 25px;
+        font-size: 26px;
         letter-spacing: 1px;
     }
 
     .sign-in-block form {
+        width: 100%;
+        max-width: 380px;
+        min-width: 0;
+
         padding: 28px 23px;
         border-radius: 19px;
+    }
+
+    .sign-in-block form label {
+        font-size: 13px;
+    }
+
+    .sign-in-block form input {
+        height: 46px;
+        padding: 0 12px;
+        font-size: 14px;
+    }
+
+    #sign_in_button {
+        height: 46px;
+        padding: 10px 12px;
+        font-size: 14px;
     }
 
     #sign-up-page-reference {
         font-size: 12px;
     }
 }
+
+
+/* ---------- SHORT DESKTOP WINDOWS ---------- */
+
+@media (min-width: 801px) and (max-height: 600px) {
+    body.sign-in-block {
+        justify-content: flex-start;
+        padding-top: 5vh;
+        padding-bottom: 5vh;
+    }
+
+    .sign-in-block header {
+        margin-bottom: 2vh;
+        font-size: clamp(22px, 2vw, 30px);
+    }
+
+    .sign-in-block form {
+        padding-top: 2vh;
+        padding-bottom: 2vh;
+    }
+
+    .sign-in-block form label {
+        margin-top: 0.5vh;
+    }
+
+    .sign-in-block form input {
+        height: 40px;
+        min-height: 36px;
+        margin-bottom: 1vh;
+    }
+
+    #sign_in_button {
+        height: 42px;
+        min-height: 38px;
+        margin-top: 1vh;
+    }
+
+    #sign-up-page-reference {
+        margin-top: 1.5vh;
+    }
+}
+
 
 /* ---------- ACCESSIBILITY ---------- */
 
