@@ -43,6 +43,12 @@
                     Profile
                 </button>
             </form>
+            <form action="/unfriend" method="POST">
+                <input type="hidden" name="recieved_request_origin" value="{{ name }}">
+                <button class="unfriend_button">
+                    Unfriend
+                </button>
+            </form>
         </div>
     {% endfor %}
 
@@ -356,5 +362,107 @@
             font-size: clamp(0.7rem, 3vw, 0.8rem);
         }
     }
+    
+/* =========================
+   UNFRIEND BUTTON
+========================= */
+
+.unfriend_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: fit-content;
+    max-width: 100%;
+    min-height: clamp(2.25rem, 4.5vh, 3.25rem);
+    padding: clamp(0.5rem, 1.2vw, 0.85rem)
+             clamp(0.8rem, 2vw, 1.5rem);
+
+    color: #ffe8ed;
+    background: linear-gradient(
+        135deg,
+        rgba(190, 55, 90, 0.95),
+        rgba(125, 35, 70, 0.95)
+    );
+
+    border: 1px solid rgba(255, 140, 170, 0.4);
+    border-radius: clamp(0.5rem, 1vw, 0.85rem);
+
+    font-family: Arial, "Helvetica Neue", sans-serif;
+    font-size: clamp(0.8rem, 1vw + 0.2rem, 1rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    box-shadow: 0 0.25rem 0.8rem rgba(160, 35, 75, 0.18);
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Hover */
+.unfriend_button:hover {
+    background: linear-gradient(
+        135deg,
+        #e6537b,
+        #a82e59
+    );
+
+    border-color: rgba(255, 180, 200, 0.8);
+    box-shadow: 0 0.35rem 1rem rgba(200, 45, 90, 0.3);
+    transform: translateY(-0.1rem);
+}
+
+/* Click */
+.unfriend_button:active {
+    transform: scale(0.97);
+}
+
+/* Keyboard accessibility */
+.unfriend_button:focus-visible {
+    outline: 2px solid #ffb3ca;
+    outline-offset: 0.2rem;
+}
+
+/* Light theme */
+body.light .unfriend_button {
+    color: #ffffff;
+    background: linear-gradient(135deg, #c53660, #98264b);
+    border-color: rgba(152, 38, 75, 0.4);
+}
+
+body.light .unfriend_button:hover {
+    background: linear-gradient(135deg, #df4b73, #ad2c55);
+}
+
+/* Phones */
+@media (max-width: 600px) {
+    .unfriend_button {
+        min-height: 2.5rem;
+        padding: 0.6rem 0.85rem;
+        font-size: 0.85rem;
+        border-radius: 0.6rem;
+    }
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .unfriend_button {
+        transition: none;
+    }
+
+    .unfriend_button:hover,
+    .unfriend_button:active {
+        transform: none;
+    }
+}
+
 </style>
 {% endblock %}

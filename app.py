@@ -81,6 +81,7 @@ def save_timezone():
         )
 
     return {"message": "Timezone saved"}, 200
+
 @app.context_processor
 def inject_wallpaper():
     user = session.get("user")
@@ -105,6 +106,7 @@ def inject_wallpaper():
         "wallpaper_class": wallpaper_class,
         "wallpaper_url": wallpaper_url
     }
+
 @app.route("/")
 def home_page_blank():
     user = session.get("user")
@@ -643,6 +645,22 @@ def get_load_friends():
     friend_count = len(names)
     exist = len(names) > 0
     return render_template("friends_list.html", user=user, names=names, exist=exist, friend_count=friend_count)
+
+@app.route("/unfriend", methods=["POST"])
+def unfriend_user():
+    user = session.get("user")
+
+    if not user:
+        return redirect("/")
+
+    recieved_request_origin = request.form.get("recieved_request_origin")
+    with sqlite3.connect(os.path.join(currentdirectory, "friends.db")) as connection_friends:
+        connection_friends.row_factory = sqlite3.Row
+        connection_friends.execute(
+            "DELETE FROM friends WHERE receiver = ? AND username = ? OR receiver = ? AND username = ?",
+            (user["username"], recieved_request_origin, recieved_request_origin, user["username"])
+        ).fetchall()
+    return redirect("/friends")
 
 @app.route("/update_profile", methods=["POST"])
 def update_profile():
