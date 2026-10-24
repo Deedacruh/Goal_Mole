@@ -201,7 +201,6 @@ Music
 Theater
 Chess
 Checkers
-Go
 Shogi
 Backgammon
 Xiangqi
