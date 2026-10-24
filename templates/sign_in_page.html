@@ -29,4 +29,541 @@
         </h3>
     </body>
     <script src="introScript.js" defer></script>
+<style>
+/* =========================================
+   GOAL MOLE — GALAXY SIGN-IN EXPERIENCE
+   Deep space • Nebula purple • Cosmic glow
+========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap');
+
+/* ---------- GLOBAL RESET ---------- */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body.sign-in-block {
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    overflow-x: hidden;
+    position: relative;
+    isolation: isolate;
+
+    font-family: 'Inter', sans-serif;
+    color: #f5f0ff;
+    background-color: #070510;
+
+    background-image:
+        radial-gradient(
+            ellipse at 15% 20%,
+            rgba(106, 42, 204, 0.24) 0%,
+            transparent 42%
+        ),
+        radial-gradient(
+            ellipse at 85% 75%,
+            rgba(45, 73, 196, 0.20) 0%,
+            transparent 42%
+        ),
+        radial-gradient(
+            ellipse at 50% 110%,
+            rgba(153, 49, 225, 0.18) 0%,
+            transparent 48%
+        ),
+        linear-gradient(
+            145deg,
+            #080612 0%,
+            #100a20 48%,
+            #070914 100%
+        );
+
+    background-attachment: fixed;
+}
+
+/* ---------- COSMIC STAR FIELD ---------- */
+
+body.sign-in-block::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
+    background-image:
+        radial-gradient(2px 2px at 10% 20%, #ffffff 98%, transparent),
+        radial-gradient(1px 1px at 25% 75%, #c7b5ff 98%, transparent),
+        radial-gradient(2px 2px at 75% 15%, #ffffff 98%, transparent),
+        radial-gradient(1px 1px at 90% 55%, #b8a1ff 98%, transparent),
+        radial-gradient(1px 1px at 60% 85%, #ffffff 98%, transparent),
+        radial-gradient(2px 2px at 40% 40%, #d9caff 98%, transparent),
+        radial-gradient(1px 1px at 15% 90%, #ffffff 98%, transparent),
+        radial-gradient(1px 1px at 82% 88%, #d4c2ff 98%, transparent);
+
+    background-size:
+        320px 320px,
+        270px 270px,
+        390px 390px,
+        300px 300px,
+        360px 360px,
+        250px 250px,
+        340px 340px,
+        290px 290px;
+
+    animation: star-drift 60s linear infinite;
+}
+
+/* ---------- NEBULA LIGHT ---------- */
+
+body.sign-in-block::after {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    pointer-events: none;
+
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+
+    background: radial-gradient(
+        circle,
+        rgba(123, 55, 220, 0.13) 0%,
+        rgba(92, 40, 170, 0.07) 35%,
+        transparent 70%
+    );
+
+    filter: blur(30px);
+    animation: nebula-pulse 8s ease-in-out infinite alternate;
+}
+
+/* ---------- PAGE TITLE ---------- */
+
+.sign-in-block header {
+    position: relative;
+    z-index: 1;
+
+    margin-bottom: 32px;
+
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(25px, 4vw, 38px);
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-align: center;
+
+    color: #ffffff;
+
+    background: linear-gradient(
+        110deg,
+        #ffffff 10%,
+        #d9c4ff 45%,
+        #a78bfa 75%,
+        #e9d5ff 100%
+    );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    filter: drop-shadow(0 0 18px rgba(167, 139, 250, 0.32));
+
+    animation: title-appear 1s ease both;
+}
+
+/* ---------- GLASS SIGN-IN CARD ---------- */
+
+.sign-in-block form {
+    width: min(100%, 420px);
+    padding: 38px 34px;
+
+    position: relative;
+    z-index: 1;
+
+    border: 1px solid rgba(184, 151, 255, 0.23);
+    border-radius: 24px;
+
+    background: linear-gradient(
+        145deg,
+        rgba(30, 22, 52, 0.88),
+        rgba(13, 12, 29, 0.91)
+    );
+
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.025) inset,
+        0 20px 70px rgba(0, 0, 0, 0.48),
+        0 0 45px rgba(112, 57, 201, 0.12),
+        0 0 100px rgba(82, 45, 170, 0.08);
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    animation: card-appear 0.8s ease both;
+    transition:
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
+}
+
+.sign-in-block form:hover {
+    border-color: rgba(184, 151, 255, 0.38);
+
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.035) inset,
+        0 25px 80px rgba(0, 0, 0, 0.50),
+        0 0 55px rgba(112, 57, 201, 0.19);
+}
+
+/* ---------- ERROR / STATUS MESSAGE ---------- */
+
+#sign_in_message {
+    margin: 0 0 22px;
+    padding: 0;
+
+    color: #ff9bb5;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+
+    text-shadow: 0 0 12px rgba(255, 83, 139, 0.15);
+}
+
+/* ---------- FIELD LABELS ---------- */
+
+.sign-in-block form label {
+    display: inline-block;
+    margin: 10px 0 9px;
+
+    color: #d9ccef;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ---------- INPUT FIELDS ---------- */
+
+.sign-in-block form input {
+    display: block;
+    width: 100%;
+    height: 49px;
+    padding: 0 15px;
+    margin: 0 0 15px;
+
+    border: 1px solid rgba(179, 153, 226, 0.20);
+    border-radius: 12px;
+    outline: none;
+
+    color: #f8f5ff;
+    background: rgba(7, 6, 18, 0.65);
+
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12) inset;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.sign-in-block form input::placeholder {
+    color: #77708e;
+    opacity: 1;
+}
+
+.sign-in-block form input:hover {
+    border-color: rgba(179, 153, 226, 0.42);
+    background: rgba(13, 10, 29, 0.85);
+}
+
+.sign-in-block form input:focus {
+    border-color: #a78bfa;
+    background: rgba(18, 12, 37, 0.95);
+
+    box-shadow:
+        0 0 0 3px rgba(139, 92, 246, 0.15),
+        0 0 24px rgba(139, 92, 246, 0.12);
+
+    transform: translateY(-1px);
+}
+
+/* Keep the browser's saved-password/autofill text readable. */
+
+.sign-in-block form input:-webkit-autofill,
+.sign-in-block form input:-webkit-autofill:hover,
+.sign-in-block form input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f8f5ff;
+    transition: background-color 9999s ease-in-out 0s;
+    box-shadow: 0 0 0 1000px #171027 inset;
+    caret-color: #ffffff;
+}
+
+/* ---------- GALAXY SIGN-IN BUTTON ---------- */
+
+#sign_in_button {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    display: block;
+    width: 100%;
+    min-height: 50px;
+    margin-top: 18px;
+    padding: 13px 18px;
+
+    border: 1px solid rgba(224, 205, 255, 0.35);
+    border-radius: 12px;
+
+    color: #ffffff;
+    background: linear-gradient(
+        110deg,
+        #7040cf 0%,
+        #8b5cf6 42%,
+        #6840d4 75%,
+        #5332b0 100%
+    );
+
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 18px rgba(110, 66, 210, 0.28),
+        0 0 25px rgba(139, 92, 246, 0.12),
+        0 1px 0 rgba(255, 255, 255, 0.13) inset;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+/* Light sweeps across the button on hover. */
+
+#sign_in_button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    z-index: -1;
+
+    width: 70%;
+    height: 100%;
+
+    background: linear-gradient(
+        100deg,
+        transparent,
+        rgba(255, 255, 255, 0.22),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+
+#sign_in_button:hover {
+    transform: translateY(-3px);
+
+    filter: brightness(1.12);
+
+    box-shadow:
+        0 9px 30px rgba(110, 66, 210, 0.40),
+        0 0 35px rgba(139, 92, 246, 0.22);
+}
+
+#sign_in_button:hover::before {
+    left: 150%;
+}
+
+#sign_in_button:active {
+    transform: translateY(0) scale(0.985);
+    filter: brightness(0.96);
+}
+
+#sign_in_button:focus-visible {
+    outline: 2px solid #e9d5ff;
+    outline-offset: 4px;
+}
+
+/* ---------- SIGN-UP SECTION ---------- */
+
+#sign-up-page-reference {
+    position: relative;
+    z-index: 1;
+
+    margin: 24px 0 0;
+    padding: 0;
+
+    font-size: 13px;
+    font-weight: 400;
+    text-align: center;
+
+    color: #9188aa;
+
+    animation: card-appear 1s ease both;
+}
+
+#sign-up-page-reference p {
+    margin: 0;
+    line-height: 1.8;
+}
+
+#sign-up-page-reference a {
+    position: relative;
+
+    color: #c4a8ff;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition:
+        color 0.25s ease,
+        text-shadow 0.25s ease;
+}
+
+#sign-up-page-reference a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+
+    width: 100%;
+    height: 1px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #b99aff,
+        transparent
+    );
+
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s ease;
+}
+
+#sign-up-page-reference a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(186, 156, 255, 0.65);
+}
+
+#sign-up-page-reference a:hover::after {
+    transform: scaleX(1);
+}
+
+/* ---------- ANIMATIONS ---------- */
+
+@keyframes star-drift {
+    from {
+        background-position:
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0;
+    }
+
+    to {
+        background-position:
+            0 320px,
+            0 -270px,
+            0 390px,
+            0 -300px,
+            0 360px,
+            0 -250px,
+            0 340px,
+            0 -290px;
+    }
+}
+
+@keyframes nebula-pulse {
+    from {
+        opacity: 0.55;
+        scale: 0.90;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1.12;
+    }
+}
+
+@keyframes title-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes card-appear {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------- MOBILE RESPONSIVENESS ---------- */
+
+@media (max-width: 480px) {
+    body.sign-in-block {
+        padding: 28px 18px;
+    }
+
+    .sign-in-block header {
+        margin-bottom: 25px;
+        letter-spacing: 1px;
+    }
+
+    .sign-in-block form {
+        padding: 28px 23px;
+        border-radius: 19px;
+    }
+
+    #sign-up-page-reference {
+        font-size: 12px;
+    }
+}
+
+/* ---------- ACCESSIBILITY ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
 </html>
