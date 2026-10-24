@@ -616,6 +616,34 @@ def accept_request():
         return redirect("/")
     if not sender:
         return redirect("/friend_requests")
+    with sqlite3.connect(os.path.join(currentdirectory, "friends.db")) as connection_friends:
+        connection_friends.row_factory = sqlite3.Row
+        friends = connection_friends.execute(
+            "SELECT * FROM friends WHERE receiver = ? OR username = ?",
+            (user["username"], user["username"])
+        ).fetchall()
+    names = []
+    for friend in friends:
+        if friend["username"] == user["username"] and friend["receiver"]:
+            names.append(friend["receiver"])
+        elif friend["receiver"] == user["username"] and friend["username"]:
+            names.append(friend["username"])    # This will turn the whole jumble dict into a bunch of names.
+    friend_count = len(names)
+    if friend_count >= 200:
+        max_friends_error_message = "Over 200 friends! Limit reached!"
+        with sqlite3.connect(os.path.join(currentdirectory, "requests.db")) as connection_requests:
+            connection_requests.row_factory = sqlite3.Row
+            requests = connection_requests.execute(
+                "SELECT sender FROM requests WHERE receiver = ?",
+                (user["username"],)
+            ).fetchall()
+
+        return render_template (
+            "friend_requests.html",
+            user=user,
+            requests=requests,
+            max_friends_error_message=max_friends_error_message
+        )
     connection = sqlite3.connect(
         os.path.join(currentdirectory, "requests.db")
     )

@@ -23,6 +23,11 @@
                 </form>
             </div>
         {% endfor %}
+        {% if max_friends_error_message %}
+            <h2 id="max_friends_error_message">
+                {{  max_friends_error_message  }}
+            </h2>
+        {% endif %}
     </div>
 <style>
     /* FRIEND REQUESTS LAYOUT */
@@ -272,6 +277,65 @@
             transition: none;
         }
     }
+    /* MAX FRIENDS ERROR MESSAGE */
+    #max_friends_error_message {
+        width: fit-content;
+        max-width: 100%;
+        box-sizing: border-box;
+
+        margin: clamp(12px, 2vh, 24px) auto;
+        padding: clamp(12px, 1.5vw, 20px);
+
+        color: #ff4d6d;
+        background: rgba(255, 45, 85, 0.10);
+        border: 1px solid rgba(255, 77, 109, 0.4);
+        border-radius: 12px;
+
+        font-family: Arial, "Helvetica Neue", sans-serif;
+        font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+        font-weight: 700;
+        line-height: 1.5;
+
+        text-align: center;
+        overflow-wrap: anywhere;
+    }
+
+    /* LIGHT THEME */
+    body.light #max_friends_error_message {
+        color: #c62845;
+        background: rgba(255, 45, 85, 0.08);
+        border-color: rgba(198, 40, 69, 0.3);
+    }
+
+    /* MOBILE */
+    @media (max-width: 700px) {
+        #max_friends_error_message {
+            width: 100%;
+            margin: 12px 0;
+        }
+    }
+    /* CUSTOM WALLPAPER */
+    body.custom #max_friends_error_message {
+        color: #ff647f;
+        background: rgba(30, 18, 48, 0.58);
+
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+
+        border: 1px solid rgba(255, 100, 127, 0.45);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+    }
+    /* CUSTOM WALLPAPER */
+body.custom #max_friends_error_message {
+    color: #ff647f;
+    background: rgba(30, 18, 48, 0.58);
+
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+
+    border: 1px solid rgba(255, 100, 127, 0.45);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+}
 </style>
 
 {% endblock %}
