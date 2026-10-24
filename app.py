@@ -25,6 +25,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 
 import io
 
+from flask import send_from_directory # For logo and image loading
 
 # This dude gives us space to hold what we want in an SQL table like an image and compress it.
 
@@ -56,6 +57,12 @@ currentdirectory = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, static_folder="frontend", static_url_path="")
 app.secret_key = "blahblahblah"
 
+@app.route("/static/<filename>")
+def serve_static_image(filename):
+    return send_from_directory(
+        os.path.join(currentdirectory, "static"),
+        filename
+    )
 @app.route("/save_timezone", methods=["POST"])
 def save_timezone():
     user = session.get("user")
@@ -124,7 +131,7 @@ def sign_up():
     message = "" # message is blank every rerun?
     # Checks if username is null or password.
     default_image = Image.open(
-        os.path.join(currentdirectory, "static", "placeholder.png")
+        os.path.join(currentdirectory, "static", "goal_mole_placeholder.png")
     )
     inputs = [username, password, confirm_password]
 

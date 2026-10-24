@@ -56,3 +56,25 @@
     background-color: #403d39;
     color: #ffffff;
 }/* Pay attention to the vw's here */
+.logo {
+    width: clamp(50px, 8vw, 120px);
+    aspect-ratio: 1 / 1;
+    height: auto;
+
+    object-fit: cover;
+    border-radius: 50%;
+
+    display: block;
+    flex-shrink: 0;
+
+    /* Center it horizontally at the top */
+    align-self: center;
+    margin: 0 auto 1vh;
+}
+
+/* Goal Mole title */
+.sidebar_title {
+    font-size: clamp(14px, 1.8vw, 28px);
+    margin: 0 0.8vw 4vh;
+    font-weight: 800;
+}

@@ -710,23 +710,62 @@ body {
         transition: none;
     }
 }
+/* Fix the profile page background */
+html {
+    min-height: 100%;
+}
+
+body.dark {
+    min-height: 100vh;
+    background-color: #171522 !important;
+    color: #f0eeff;
+}
+
+body.light {
+    min-height: 100vh;
+    background-color: #f5f3fa !important;
+    color: #25233a;
+}
+/* More transparent widgets ONLY with custom wallpapers */
+body.custom .profile-widget {
+    background-color: rgba(35, 32, 45, 0.45);
+}
+
+/* Keep the achievements widget's gradient, but make its base transparent */
+body.custom .profile-achievements-widget {
+    background:
+        radial-gradient(
+            ellipse at top right,
+            rgba(139, 92, 246, 0.12),
+            transparent 65%
+        ),
+        rgba(35, 32, 45, 0.45);
+}
     </style>
 </head>
 
 <body class="{{ select_user_setting[1] }}">
 
-    {% if select_user_setting[0] != "empty" %}
+    <body class="{{ select_user_setting[1] }}">
+
+    {% if select_user_setting[1] == "custom" %}
         <style>
             body {
                 background-image: url("{{ url_for('get_wallpaper_picture', username=selected_user) }}");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
             }
         </style>
     {% endif %}
 
     <!-- SIDEBAR -->
     <div id="sidebar">
+        <img src="static/goal_mole_placeholder.png" class="logo" alt="Goal Mole logo">
+        
         <h1 class="sidebar_title">Goal Mole</h1>
-
+        
         <nav class="sidebar_nav">
             <a class="sidebar_button" href="/home_page">Home</a>
             <a class="sidebar_button" href="/friends">Friends</a>
