@@ -1,0 +1,18 @@
+
+# Ignore Python virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Hide SQL databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Hide secret environment files
+.env
+.env.*
+
+# Hide local configuration
+instance/
