@@ -12,6 +12,8 @@
 
 """
 
+from flask import send_from_directory
+
 # flask --app app run --debug
 
 import calendar
@@ -173,14 +175,16 @@ def get_connection_for_profile():
 
 app = Flask(__name__, static_folder="frontend", static_url_path="")
 
+@app.route("/static/<path:filename>")
+def serve_static_image(filename):
+    return send_from_directory(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "static"),
+        filename
+    )
 app.secret_key = os.environ.get("SECRET_KEY", "local-development-key")
 
 @app.route("/static/<filename>")
-def serve_static_image(filename):
-    return send_from_directory(
-        os.path.join(currentdirectory, "static"),
-        filename
-    )
+
 @app.route("/save_timezone", methods=["POST"])
 def save_timezone():
     user = session.get("user")
