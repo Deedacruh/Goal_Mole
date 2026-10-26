@@ -316,6 +316,10 @@ def sign_up():
         connection.execute(
             "ALTER TABLE user_settings ADD COLUMN account_creation_day TEXT"
         )
+    if "timezone" not in columns:
+        connection.execute(
+            "ALTER TABLE user_settings ADD COLUMN timezone TEXT"
+        )
     connection.commit()
     connection.close()
     for x in range(len(inputs)):
