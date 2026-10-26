@@ -35,6 +35,40 @@ import os
 
 currentdirectory = os.path.dirname(os.path.abspath(__file__))
 
+def initialize_user_settings():
+    with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS user_settings (
+                username TEXT NOT NULL,
+                wallpaper_img BLOB,
+                wallpaper_setting TEXT,
+                public_email TEXT,
+                pronouns TEXT,
+                bio TEXT,
+                job TEXT,
+                location TEXT,
+                timezone TEXT,
+                account_creation_day TEXT
+            )
+        """)
+
+        columns = [
+            row[1] for row in connection.execute(
+                "PRAGMA table_info(user_settings)"
+            ).fetchall()
+        ]
+
+        if "timezone" not in columns:
+            connection.execute(
+                "ALTER TABLE user_settings ADD COLUMN timezone TEXT"
+            )
+
+        if "account_creation_day" not in columns:
+            connection.execute(
+                "ALTER TABLE user_settings ADD COLUMN account_creation_day TEXT"
+            )
+
+initialize_user_settings()
 
 def get_wallpaper_setting(username):
     with sqlite3.connect(os.path.join(currentdirectory, "user_settings.db")) as connection:
