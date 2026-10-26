@@ -36,7 +36,8 @@ import sqlite3
 import os
 
 currentdirectory = "/var/data"
-    
+projectdirectory = os.path.dirname(os.path.abspath(__file__))
+
 def initialize_user_settings():
     database_tables = {
         "user_settings.db": """
@@ -251,7 +252,7 @@ def sign_up():
     message = "" # message is blank every rerun?
     # Checks if username is null or password.
     default_image = Image.open(
-        os.path.join(currentdirectory, "static", "goal_mole_placeholder.png")
+        os.path.join(projectdirectory, "static", "goal_mole_placeholder.png")
     )
     inputs = [username, password, confirm_password]
 
