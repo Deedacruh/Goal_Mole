@@ -371,3 +371,5 @@ Translation
 Linguistics
 Sudoku
 Cryptography
+HTML
+CSS
