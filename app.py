@@ -71,6 +71,141 @@ def initialize_user_settings():
         print("TABLES:", connection.execute(
             "SELECT name FROM sqlite_master WHERE type='table'"
         ).fetchall())
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "profile.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS profile(
+                username TEXT,
+                password TEXT,
+                profile_picture BLOB
+            )
+        """)
+        connection.commit()
+        connection.close()
+    
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "user_holes.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS user_holes(
+                username TEXT NOT NULL,
+                total_holes_dug INT
+            )
+        """)
+        connection.commit()
+        connection.close()
+    
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "global_holes.db")
+        )
+    
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS global_holes(
+                unique_test TEST UNIQUE,
+                total_global_holes INT
+            )
+        """)
+        connection.commit()
+        connection.close()
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "tasks_reloader.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tasks_reloader(
+                username TEXT NOT NULL,
+                task TEXT,
+                skill TEXT,
+                recurrence TEXT,
+                every_month_day INT
+            )
+        """)
+        # Recurrence is weekday it was created or like every day or month
+        connection.commit()
+        connection.close()
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "skills.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS skills(
+                username TEXT NOT NULL,
+                skill TEXT,
+                total_holes_dug INT
+            )
+        """)
+        connection.commit()
+        connection.close()
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "tasks_today.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tasks_today(
+                username TEXT NOT NULL,
+                task TEXT,
+                skill TEXT,
+                day_of_month_added TEXT
+            )
+        """)
+        # If it's the next day then you would check the tasks_reloader 
+        # and see if the current day matches up with any task there first and then do full wipe and then reload based on weekday so the every days will be removed and re added if overdue.
+        connection.commit()
+        connection.close()
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "tasks_completed_today.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tasks_completed_today(
+                username TEXT NOT NULL,
+                task TEXT,
+                skill TEXT,
+                day_of_month_completed TEXT
+            )
+        """)
+        connection.commit()
+        connection.close()
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "requests.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS requests(
+                sender TEXT NOT NULL,
+                receiver TEXT
+            )
+        """)
+        connection.commit()
+        connection.close()
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "friends.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS friends (
+                username TEXT NOT NULL,
+                receiver TEXT
+            )
+        """) #TODO We will have one connection with one person and another one sided and we just do a double check for each one to get each user's friends.
+        connection.commit()
+        connection.close()
+        connection = sqlite3.connect(
+            os.path.join(currentdirectory, "achievements.db")
+        )
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS achievements(
+                username TEXT NOT NULL,
+                achievement TEXT
+            )
+        """)
+        connection.commit()
+        connection.close()
 
 initialize_user_settings()
 
