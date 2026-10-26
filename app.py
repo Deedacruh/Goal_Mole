@@ -1365,7 +1365,7 @@ def get_skills_page():
     text = request.values.get("input_search", "").strip().lower()
     skills = [] # final skills
     current_skills = [] # all skills already in the SQL
-    with open(os.path.join(currentdirectory, "skills.txt"), "r", encoding="utf-8") as file:
+    with open(os.path.join(projectdirectory, "skills.txt"), "r", encoding="utf-8") as file:
         all_skills = [line.strip() for line in file if line.strip()]
     # every skill avaliable. All must start with a capitol letter at the beginning
     # Something related to this, all_skills = []
