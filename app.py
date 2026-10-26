@@ -55,7 +55,8 @@ def get_connection_for_profile():
 currentdirectory = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, static_folder="frontend", static_url_path="")
-app.secret_key = "blahblahblah"
+
+app.secret_key = os.environ.get("SECRET_KEY", "local-development-key")
 
 @app.route("/static/<filename>")
 def serve_static_image(filename):
