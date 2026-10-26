@@ -67,6 +67,10 @@ def initialize_user_settings():
             connection.execute(
                 "ALTER TABLE user_settings ADD COLUMN account_creation_day TEXT"
             )
+        print("DATABASE PATH:", os.path.join(currentdirectory, "user_settings.db"))
+        print("TABLES:", connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'"
+        ).fetchall())
 
 initialize_user_settings()
 
