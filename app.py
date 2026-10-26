@@ -183,8 +183,6 @@ def serve_static_image(filename):
     )
 app.secret_key = os.environ.get("SECRET_KEY", "local-development-key")
 
-@app.route("/static/<filename>")
-
 @app.route("/save_timezone", methods=["POST"])
 def save_timezone():
     user = session.get("user")
